@@ -1,0 +1,191 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/hud.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/ui/hud_icon.gd" id="2"]
+[ext_resource type="Script" path="res://scenes/ui/touch_controls.gd" id="3"]
+
+[node name="Hud" type="CanvasLayer"]
+process_mode = 3
+layer = 5
+script = ExtResource("1")
+
+[node name="TouchControls" type="Control" parent="."]
+process_mode = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3")
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+offset_left = 28.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 76.0
+theme_override_constants/separation = 12
+
+[node name="CoinIcon" type="Control" parent="TopBar"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+script = ExtResource("2")
+
+[node name="GoldLabel" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "0"
+
+[node name="StarIcon" type="Control" parent="TopBar"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+script = ExtResource("2")
+star = true
+
+[node name="StarsLabel" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "0 / 3"
+
+[node name="PauseButton" type="Button" parent="."]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -116.0
+offset_top = 20.0
+offset_right = -28.0
+offset_bottom = 108.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 36
+text = "II"
+
+[node name="PauseMenu" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="PauseMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="Center" type="CenterContainer" parent="PauseMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="PauseMenu/Center"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="PauseMenu/Center/Panel"]
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="PauseMenu/Center/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+text = "PAUSE_TITLE"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PauseMenu/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PAUSE_RESUME"
+
+[node name="MusicButton" type="Button" parent="PauseMenu/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PAUSE_MUSIC_ON"
+
+[node name="SfxButton" type="Button" parent="PauseMenu/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PAUSE_SFX_ON"
+
+[node name="MenuButton" type="Button" parent="PauseMenu/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PAUSE_MAIN_MENU"
+
+[node name="ResultMenu" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="ResultMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="Center" type="CenterContainer" parent="ResultMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="ResultMenu/Center"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="ResultMenu/Center/Panel"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="ResultMenu/Center/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.45, 1)
+theme_override_font_sizes/font_size = 52
+text = "RESULT_TITLE"
+horizontal_alignment = 1
+
+[node name="ResultGold" type="Label" parent="ResultMenu/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ResultStars" type="Label" parent="ResultMenu/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="ResultMenu/Center/Panel/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 24
+
+[node name="ReplayButton" type="Button" parent="ResultMenu/Center/Panel/VBox/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "RESULT_REPLAY"
+
+[node name="ResultMenuButton" type="Button" parent="ResultMenu/Center/Panel/VBox/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PAUSE_MAIN_MENU"

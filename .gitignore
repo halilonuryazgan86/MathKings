@@ -1,0 +1,21 @@
+# Godot
+game/.godot/
+game/**/*.translation
+*.tmp
+
+# Derleme çıktıları ve imzalar
+builds/
+*.apk
+*.aab
+*.idsig
+*.keystore
+*.jks
+
+# .NET (Sprint 3)
+bin/
+obj/
+.vs/
+
+# OS / editör
+.DS_Store
+Thumbs.db

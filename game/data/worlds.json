@@ -1,0 +1,18 @@
+{
+	"worlds": [
+		{
+			"id": "numbers_forest",
+			"nameKey": "WORLD_NUMBERS_FOREST",
+			"packId": "core",
+			"isPremium": false,
+			"grades": [4, 5, 6, 7],
+			"levels": [
+				{
+					"id": "forest_01",
+					"nameKey": "LEVEL_FOREST_01",
+					"layout": "res://data/levels/forest_01.txt"
+				}
+			]
+		}
+	]
+}

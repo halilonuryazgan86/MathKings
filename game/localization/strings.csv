@@ -1,0 +1,47 @@
+keys,tr
+GAME_TITLE,Matematik Krallığı
+GAME_SUBTITLE,Kayıp kristalleri bul!
+MENU_GUEST,Misafir Olarak Oyna
+MENU_CONTINUE,Devam Et
+MENU_CHANGE_HERO,Kahramanı Değiştir
+MENU_LOGIN,Giriş Yap
+MENU_REGISTER,Kayıt Ol
+MENU_COMING_SOON,Bu özellik çok yakında geliyor!
+PROFILE_TITLE,Kendine bir takma ad seç
+PROFILE_NICK_HINT,Gerçek adını kullanmıyoruz. Bu ad sadece oyunda görünür.
+PROFILE_REROLL,Başka Bir Ad
+PROFILE_GRADE,Kaçıncı sınıftasın?
+GRADE_N,{grade}. Sınıf
+COMMON_CONTINUE,Devam
+COMMON_BACK,Geri
+CHAR_TITLE,Kahramanını seç
+CHAR_ARIN,Arin
+CHAR_ARIN_DESC,Kaşif: yeni yollar bulmayı sever.
+CHAR_LINA,Lina
+CHAR_LINA_DESC,Mucit: her şeyin nasıl çalıştığını merak eder.
+CHAR_BORA,Bora
+CHAR_BORA_DESC,Koruyucu: arkadaşlarını hep kollar.
+CHAR_START,Maceraya Başla
+OWL_NAME,Bilge Baykuş
+OWL_NEXT,Devam
+OWL_SKIP,Atla
+OWL_INTRO_1,Merhaba {name}! Ben Bilge Baykuş.
+OWL_INTRO_2,Matematik Krallığı'nın sihirli kristalleri kayboldu. Onları birlikte bulacağız!
+OWL_INTRO_3,Altınları ve yıldızları topla. Ormanın sonundaki Kristal Kapısı'na ulaş!
+OWL_CONTROLS_TOUCH,Soldaki oklarla yürü. Sağdaki düğmeyle zıpla.
+OWL_CONTROLS_KEYS,Ok tuşları ya da A/D ile yürü. Boşluk tuşuyla zıpla.
+OWL_GATE_1,Harika iş çıkardın! Kristal Kapısı'na ulaştın.
+OWL_GATE_2,Kapıyı bir sayı canavarı koruyor. Matematik Savaşı çok yakında burada!
+PAUSE_TITLE,Oyun Durdu
+PAUSE_RESUME,Devam Et
+PAUSE_MUSIC_ON,Müzik: Açık
+PAUSE_MUSIC_OFF,Müzik: Kapalı
+PAUSE_SFX_ON,Efektler: Açık
+PAUSE_SFX_OFF,Efektler: Kapalı
+PAUSE_MAIN_MENU,Ana Menü
+RESULT_TITLE,Bölüm Tamamlandı!
+RESULT_GOLD,Kazanılan altın: +{gold}
+RESULT_STARS,Yıldızlar: {stars} / {total}
+RESULT_REPLAY,Tekrar Oyna
+WORLD_NUMBERS_FOREST,Sayılar Ormanı
+LEVEL_FOREST_01,Orman Yolu
