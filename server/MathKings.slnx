@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MathKings.Api/MathKings.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MathKings.Api.Tests/MathKings.Api.Tests.csproj" />
+  </Folder>
+</Solution>

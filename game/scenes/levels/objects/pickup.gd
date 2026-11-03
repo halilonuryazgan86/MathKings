@@ -6,8 +6,6 @@ signal picked(pickup: Pickup)
 
 enum Kind { COIN, STAR }
 
-const GOLD_VALUE := {Kind.COIN: 1, Kind.STAR: 10}
-
 var kind := Kind.COIN
 var item_id := ""
 var already_collected := false
@@ -29,7 +27,7 @@ func _ready() -> void:
 
 
 func gold_value() -> int:
-	return GOLD_VALUE[kind]
+	return SaveData.item_gold(item_id)
 
 
 func _process(delta: float) -> void:

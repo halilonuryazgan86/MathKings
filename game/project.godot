@@ -16,8 +16,9 @@ config/quit_on_go_back=false
 
 [autoload]
 
-GameState="*res://autoload/game_state.gd"
 Settings="*res://autoload/settings.gd"
+Cloud="*res://autoload/cloud.gd"
+GameState="*res://autoload/game_state.gd"
 
 [display]
 
@@ -62,6 +63,10 @@ locale/fallback="tr"
 
 2d_physics/layer_1="world"
 2d_physics/layer_2="player"
+
+[mathkings]
+
+api/base_url="http://localhost:5055"
 
 [rendering]
 

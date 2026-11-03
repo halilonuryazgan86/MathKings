@@ -53,6 +53,7 @@ func _make_card(id: String, group: ButtonGroup) -> Button:
 func _on_start() -> void:
 	if GameState.save.set_character(_selected):
 		GameState.persist()
+		GameState.push_profile_details()  # Arka planda; çevrimdışıysa sonra düzelir.
 		GameState.start_level(GameState.FIRST_LEVEL_ID)
 
 

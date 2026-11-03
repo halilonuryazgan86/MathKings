@@ -103,7 +103,7 @@ func _build_cell(ch: String, cell: Vector2i) -> void:
 func _add_pickup(ch: String, cell: Vector2i, pos: Vector2) -> void:
 	var p := Pickup.new()
 	p.kind = Pickup.Kind.STAR if ch == "s" else Pickup.Kind.COIN
-	var prefix := SaveData.STAR_PREFIX if ch == "s" else "coin_"
+	var prefix := SaveData.STAR_PREFIX if ch == "s" else SaveData.COIN_PREFIX
 	p.item_id = "%s%d_%d" % [prefix, cell.x, cell.y]
 	p.already_collected = GameState.save.is_collected(level_id, p.item_id)
 	p.position = pos
@@ -141,7 +141,7 @@ func _char_at(cell: Vector2i) -> String:
 # --- Olaylar -----------------------------------------------------------------
 
 func _on_picked(p: Pickup) -> void:
-	if GameState.collect(level_id, p.item_id, p.gold_value()):
+	if GameState.collect(level_id, p.item_id):
 		_gold_this_run += p.gold_value()
 		Sfx.play(self, "coin")
 		if p.kind == Pickup.Kind.STAR:

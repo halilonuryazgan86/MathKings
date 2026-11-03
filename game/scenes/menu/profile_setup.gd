@@ -13,8 +13,10 @@ var _grade := 0
 
 
 func _ready() -> void:
-	_nickname = GameState.save.nickname()
-	_grade = GameState.save.grade()
+	# Hesaba yeni profil eklerken mevcut profilin bilgileriyle başlama.
+	if not GameState.creating_cloud_profile:
+		_nickname = GameState.save.nickname()
+		_grade = GameState.save.grade()
 	if _nickname.is_empty():
 		_reroll()
 	_nick_label.text = _nickname
@@ -47,13 +49,31 @@ func _reroll() -> void:
 
 
 func _on_continue() -> void:
-	if GameState.save.set_profile(_nickname, _grade):
+	if GameState.creating_cloud_profile:
+		await _create_cloud_profile()
+	elif GameState.save.set_profile(_nickname, _grade):
 		GameState.persist()
+		await GameState.push_profile_details()
 		GameState.go_to(GameState.SCENE_CHARACTER_SELECT)
 
 
+func _create_cloud_profile() -> void:
+	_continue.disabled = true
+	%Status.text = tr("NET_WAIT")
+	var res := await Cloud.create_profile(_nickname, _grade, SaveData.CHARACTER_IDS[0])
+	if not res.ok:
+		%Status.text = res.error
+		_continue.disabled = false
+		return
+	GameState.creating_cloud_profile = false
+	await GameState.activate_cloud_profile(res.data)
+	GameState.go_to(GameState.SCENE_CHARACTER_SELECT)
+
+
 func _back() -> void:
-	GameState.go_to(GameState.SCENE_MAIN_MENU)
+	var cloud := GameState.creating_cloud_profile
+	GameState.creating_cloud_profile = false
+	GameState.go_to(GameState.SCENE_PROFILE_PICKER if cloud else GameState.SCENE_MAIN_MENU)
 
 
 func _unhandled_input(event: InputEvent) -> void:

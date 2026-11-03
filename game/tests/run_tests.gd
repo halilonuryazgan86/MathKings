@@ -31,6 +31,11 @@ func _initialize() -> void:
 		test_battle_stars,
 		test_battle_reward_not_farmable,
 		test_answer_stats,
+		test_gold_matches_server_formula,
+		test_merge_progress,
+		test_progress_dict_has_no_personal_data,
+		test_session_store_is_encrypted,
+		test_cloud_error_messages,
 	]
 	for t: Callable in tests:
 		_cleanup()
@@ -78,13 +83,13 @@ func test_profile_validation() -> void:
 
 func test_collect_only_once() -> void:
 	var s := SaveData.new()
-	check(s.collect("forest_01", "coin_1_1", 1), "ilk toplama ödüllendirilir")
-	check(not s.collect("forest_01", "coin_1_1", 1), "aynı altın tekrar ödüllendirilmez")
+	check(s.collect("forest_01", "coin_1_1"), "ilk toplama ödüllendirilir")
+	check(not s.collect("forest_01", "coin_1_1"), "aynı altın tekrar ödüllendirilmez")
 	check(s.gold() == 1, "altın yalnızca bir kez eklenir")
-	check(s.collect("forest_01", "star_5_5", 10), "yıldız toplanır")
+	check(s.collect("forest_01", "star_5_5"), "yıldız toplanır")
 	check(s.star_count("forest_01") == 1, "yıldız sayısı doğru")
-	check(s.collect("forest_02", "coin_1_1", 1), "farklı bölümde aynı id ayrı sayılır")
-	check(s.collect("forest_01", "coin_2_2", -50) and s.gold() == 12, "negatif ödül altını düşürmez")
+	check(s.collect("forest_02", "coin_1_1"), "farklı bölümde aynı id ayrı sayılır")
+	check(not s.collect("forest_01", "hile_1") and s.gold() == 12, "bilinmeyen öğe ödül vermez; altın 1+10+1")
 
 
 func test_complete_level_only_once() -> void:
@@ -100,7 +105,7 @@ func test_save_roundtrip() -> void:
 	var s := SaveData.new()
 	s.set_profile("Zeki Panda", 6)
 	s.set_character("bora")
-	s.collect("forest_01", "coin_3_10", 1)
+	s.collect("forest_01", "coin_3_10")
 	s.complete_level("forest_01")
 	s.mark_intro_seen()
 	check(SaveStore.save_data(s, TEST_PATH), "kayıt yazıldı")
@@ -110,7 +115,7 @@ func test_save_roundtrip() -> void:
 	check(l.nickname() == "Zeki Panda" and l.grade() == 6 and l.character() == "bora", "profil korunur")
 	check(l.gold() == 1 and l.is_collected("forest_01", "coin_3_10"), "ilerleme korunur")
 	check(l.is_level_completed("forest_01") and l.seen_intro(), "bölüm ve tanıtım durumu korunur")
-	check(not l.collect("forest_01", "coin_3_10", 1), "yeniden açılışta tekrar ödül yok")
+	check(not l.collect("forest_01", "coin_3_10"), "yeniden açılışta tekrar ödül yok")
 
 
 func test_corrupt_file_recovers() -> void:
@@ -124,7 +129,7 @@ func test_corrupt_file_recovers() -> void:
 
 func test_interrupted_write_recovers() -> void:
 	var s := SaveData.new()
-	s.collect("forest_01", "coin_9_9", 1)
+	s.collect("forest_01", "coin_9_9")
 	var f := FileAccess.open(TEST_PATH + ".tmp", FileAccess.WRITE)
 	f.store_string(JSON.stringify(s.to_dict()))
 	f.close()
@@ -307,6 +312,72 @@ func test_answer_stats() -> void:
 	check(SaveStore.load_data(TEST_PATH).topic_stats("div") == {"attempts": 1, "correct": 1}, "istatistik kaydedilir")
 	var t := SaveData.new({"stats": {"mul": {"attempts": 2, "correct": 50}, "x": "bozuk"}})
 	check(t.topic_stats("mul").correct == 2 and t.topic_stats("x").attempts == 0, "bozuk istatistik temizlenir")
+
+
+# --- Bulut senkronizasyonu ---------------------------------------------------
+
+func test_gold_matches_server_formula() -> void:
+	# Sunucudaki ProgressRulesTests.Gold_matches_client_formula ile aynı örnek: 2 + 10 + 20 + 15.
+	var s := SaveData.new({"levels": {"forest_01": {
+		"completed": true, "battleStars": 3, "collected": ["coin_1_1", "coin_2_1", "star_3_1"]}}})
+	check(s.gold() == 47, "altın formülü sunucuyla aynı (47)")
+
+
+func test_merge_progress() -> void:
+	var a := SaveData.new()
+	a.collect("forest_01", "coin_1_1")
+	a.collect("forest_01", "star_3_1")
+	a.record_battle("forest_01", 1)
+	a.complete_level("forest_01")
+	a.record_answer("mul", true)
+	var b := SaveData.new()
+	b.collect("forest_01", "coin_1_1")
+	b.collect("forest_01", "coin_9_9")
+	b.record_battle("forest_01", 3)
+	b.mark_intro_seen()
+	b.record_answer("mul", false)
+	b.record_answer("mul", false)
+
+	a.merge_progress(b.progress_dict())
+	check(a.to_dict().levels.forest_01.collected.size() == 3, "toplananlar birleşir, ortaklar tekrarlanmaz")
+	check(a.battle_stars("forest_01") == 3 and a.is_level_completed("forest_01"), "en iyi savaş ve tamamlanma korunur")
+	check(a.seen_intro(), "tanıtım durumu birleşir")
+	check(a.topic_stats("mul") == {"attempts": 2, "correct": 1}, "istatistik en büyük değerlerle birleşir")
+	var gold := a.gold()
+	a.merge_progress(b.progress_dict())
+	check(a.gold() == gold and gold == 1 + 1 + 10 + 20 + 15, "tekrar birleştirme altını artırmaz")
+	a.merge_progress({"levels": {"forest_01": {"battleStars": 99, "collected": ["hile"]}}, "stats": "bozuk"})
+	check(a.battle_stars("forest_01") == 3 and a.gold() == gold, "bozuk sunucu verisi normalize edilir")
+
+
+func test_progress_dict_has_no_personal_data() -> void:
+	var s := SaveData.new()
+	s.set_profile("Cesur Tilki", 5)
+	var keys := s.progress_dict().keys()
+	keys.sort()
+	check(keys == ["levels", "seenIntro", "stats"], "sunucuya yalnızca ilerleme gider (takma ad ve misafir kimliği gitmez)")
+
+
+func test_session_store_is_encrypted() -> void:
+	var path := "user://test_session.dat"
+	SessionStore.write({"email": "veli@example.com", "refreshToken": "gizli-belirtec"}, path)
+	var raw := FileAccess.get_file_as_bytes(path).get_string_from_ascii()
+	check(not "gizli-belirtec" in raw, "yenileme belirteci dosyada düz metin değil")
+	check(SessionStore.read(path).get("refreshToken") == "gizli-belirtec", "oturum geri okunur")
+	check(SessionStore.read(path, "baska-anahtar").is_empty(), "başka cihaz anahtarıyla okunamaz")
+	SessionStore.clear(path)
+	check(SessionStore.read(path).is_empty(), "oturum silinir")
+
+
+func test_cloud_error_messages() -> void:
+	TranslationServer.set_locale("tr")
+	# Autoload sınıfı -s modunda derleme anında yok; betiği doğrudan yükle.
+	var cloud: GDScript = load("res://autoload/cloud.gd")
+	check(cloud.error_message(0, null) == TranslationServer.translate("NET_OFFLINE"), "bağlantı yok mesajı")
+	check(cloud.error_message(400, {"errors": {"password": ["Şifre en az 8 karakter olmalı."]}}) == "Şifre en az 8 karakter olmalı.",
+		"sunucu doğrulama mesajı gösterilir")
+	check(cloud.error_message(401, {"detail": "E-posta veya şifre hatalı."}) == "E-posta veya şifre hatalı.", "sunucu detay mesajı")
+	check(cloud.error_message(401, null, "SESSION_EXPIRED") == TranslationServer.translate("SESSION_EXPIRED"), "oturum süresi doldu mesajı")
 
 
 func test_translations() -> void:

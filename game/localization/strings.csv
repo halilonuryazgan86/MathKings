@@ -6,7 +6,63 @@ MENU_CONTINUE,Devam Et
 MENU_CHANGE_HERO,Kahramanı Değiştir
 MENU_LOGIN,Giriş Yap
 MENU_REGISTER,Kayıt Ol
-MENU_COMING_SOON,Bu özellik çok yakında geliyor!
+MENU_PROFILES,Profiller
+MENU_PLAYER_GUEST,Oyuncu: {name} (misafir)
+MENU_PLAYER_CLOUD,Oyuncu: {name} (hesaba kayıtlı)
+SESSION_EXPIRED,Oturum süresi doldu. İlerleme bu cihazda güvende; eşitlemek için tekrar giriş yapın.
+ACCOUNT_DELETED,Hesap ve tüm profiller kalıcı olarak silindi.
+COMMON_CLOSE,Kapat
+COMMON_CANCEL,Vazgeç
+GATE_TITLE,Yetişkin Alanı
+GATE_INFO,Bu bölüm ebeveynler içindir. Lütfen doğum yılınızı girin.
+GATE_PLACEHOLDER,Doğum yılı
+GATE_INVALID,Lütfen geçerli bir yıl girin.
+GATE_CHILD,Bu bölümü bir yetişkinle birlikte açabilirsin. Haydi oyuna dön!
+ACC_LOGIN_TITLE,Ebeveyn Girişi
+ACC_REGISTER_TITLE,Ebeveyn Hesabı Oluştur
+ACC_CONFIRM_TITLE,E-posta Doğrulama
+ACC_FORGOT_TITLE,Şifremi Unuttum
+ACC_RESET_TITLE,Yeni Şifre
+ACC_CREATE,Hesap Oluştur
+ACC_VERIFY,Doğrula
+ACC_SEND_CODE,Kod Gönder
+ACC_CHANGE_PASSWORD,Şifreyi Değiştir
+ACC_EMAIL,E-posta
+ACC_PASSWORD,Şifre (en az 8 karakter)
+ACC_NEW_PASSWORD,Yeni şifre (en az 8 karakter)
+ACC_PASSWORD_AGAIN,Şifre (tekrar)
+ACC_CODE,6 haneli kod
+ACC_CONSENT,18 yaşından büyüğüm. Aydınlatma metnini okudum ve çocuğumun oyunu kullanmasına onay veriyorum.
+ACC_CONSENT_READ,Aydınlatma metnini oku
+ACC_GO_REGISTER,Hesabınız yok mu? Kayıt olun
+ACC_GO_LOGIN,Zaten hesabınız var mı? Giriş yapın
+ACC_FORGOT,Şifremi unuttum
+ACC_RESEND,Kodu tekrar gönder
+ACC_CODE_SENT,Kod tekrar gönderildi.
+ACC_CONFIRM_INFO,E-posta adresinize 6 haneli bir doğrulama kodu gönderdik.
+ACC_CONFIRMED,E-posta doğrulandı. Şimdi giriş yapabilirsiniz.
+ACC_RESET_INFO,Hesap kayıtlıysa e-posta adresinize 6 haneli bir kod gönderdik.
+ACC_PASSWORD_CHANGED,Şifreniz değiştirildi. Yeni şifrenizle giriş yapın.
+ACC_ERR_EMAIL,Geçerli bir e-posta adresi girin.
+ACC_ERR_PASSWORD,Şifre en az 8 karakter olmalı.
+ACC_ERR_MATCH,Şifreler aynı değil.
+ACC_ERR_CODE,6 haneli kodu girin.
+ACC_ERR_CONSENT,Devam etmek için onay kutusunu işaretleyin.
+CONSENT_TEXT,"AYDINLATMA METNİ (TASLAK - hukuki inceleme bekliyor)\n\nHesap yalnızca ebeveyn tarafından açılır.\n\nSakladığımız veriler: ebeveynin e-posta adresi ve şifresinin geri döndürülemez özeti. Çocuk profili için yalnızca takma ad, sınıf düzeyi, seçilen karakter ve oyun ilerlemesi.\n\nToplamadığımız veriler: çocuğun gerçek adı, doğum tarihi, konumu veya fotoğrafı. Oyunda sohbet, mesajlaşma ve reklam yoktur.\n\nAmaç: oyun ilerlemesinin cihazlar arasında korunması.\n\nHaklarınız: hesabınızı ve tüm profilleri oyun içinden istediğiniz zaman kalıcı olarak silebilirsiniz.\n\nBu metin taslaktır ve yayından önce hukuki olarak tamamlanacaktır."
+PICKER_TITLE,Kim oynayacak?
+PICKER_ACCOUNT,Hesap: {email}
+PICKER_EMPTY,Henüz profil yok. Bu cihazdaki ilerlemeyi aktarabilir ya da yeni profil ekleyebilirsiniz.
+PICKER_TRANSFER,Bu cihazdaki ilerlemeyi aktar ({name})
+PICKER_NEW,Yeni Profil Ekle
+PICKER_LOGOUT,Çıkış Yap
+PICKER_DELETE,Hesabı Sil
+PICKER_ACTIVE,aktif
+DELETE_WARNING,Hesap ve tüm çocuk profilleri ile ilerlemeleri kalıcı olarak silinecek. Bu işlem geri alınamaz. Onaylamak için şifrenizi girin.
+DELETE_CONFIRM,Kalıcı Olarak Sil
+NET_WAIT,Lütfen bekleyin...
+NET_OFFLINE,Sunucuya ulaşılamadı. İnternet bağlantınızı kontrol edin. Oyun çevrimdışı oynanabilir.
+NET_TOO_MANY,Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.
+NET_ERROR,Bir sorun oluştu. Lütfen tekrar deneyin.
 PROFILE_TITLE,Kendine bir takma ad seç
 PROFILE_NICK_HINT,Gerçek adını kullanmıyoruz. Bu ad sadece oyunda görünür.
 PROFILE_REROLL,Başka Bir Ad

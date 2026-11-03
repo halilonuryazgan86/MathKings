@@ -7,7 +7,11 @@ const SCHEMA_VERSION := 1
 const GRADES: Array[int] = [4, 5, 6, 7]
 const CHARACTER_IDS: Array[String] = ["arin", "lina", "bora"]
 const MAX_NICKNAME_LENGTH := 24
+# Altın kuralları: sunucudaki ProgressRules ile aynı olmalıdır.
+const COIN_PREFIX := "coin_"
 const STAR_PREFIX := "star_"
+const COIN_GOLD := 1
+const STAR_GOLD := 10
 const BATTLE_FIRST_WIN_GOLD := 20
 const BATTLE_STAR_GOLD := 5
 
@@ -70,16 +74,31 @@ func mark_intro_seen() -> void:
 
 # --- İlerleme ve ödüller -----------------------------------------------------
 
+## Altın saklanmaz; ilerlemeden hesaplanır. Böylece cihazlar arası birleştirmede
+## altın iki kez sayılmaz ve elle değiştirilemez.
 func gold() -> int:
-	return _data.gold
+	var total := 0
+	for lv in _data.levels.values():
+		for id: String in lv.collected:
+			total += item_gold(id)
+		if lv.battleStars > 0:
+			total += BATTLE_FIRST_WIN_GOLD + lv.battleStars * BATTLE_STAR_GOLD
+	return total
 
 
-## Bir toplanabiliri yalnızca ilk kez ödüllendirir. Tekrar oynamada false döner.
-func collect(level_id: String, item_id: String, gold_value: int) -> bool:
-	if level_id.is_empty() or item_id.is_empty() or is_collected(level_id, item_id):
+static func item_gold(item_id: String) -> int:
+	if item_id.begins_with(STAR_PREFIX):
+		return STAR_GOLD
+	if item_id.begins_with(COIN_PREFIX):
+		return COIN_GOLD
+	return 0
+
+
+## Bir toplanabiliri yalnızca ilk kez kaydeder. Tekrar oynamada false döner.
+func collect(level_id: String, item_id: String) -> bool:
+	if level_id.is_empty() or item_gold(item_id) == 0 or is_collected(level_id, item_id):
 		return false
 	_level(level_id).collected.append(item_id)
-	_data.gold += maxi(gold_value, 0)
 	return true
 
 
@@ -106,7 +125,6 @@ func record_battle(level_id: String, stars: int) -> int:
 	if new_best > old_best:
 		reward += (new_best - old_best) * BATTLE_STAR_GOLD
 		lv.battleStars = new_best
-	_data.gold += reward
 	return reward
 
 
@@ -127,6 +145,45 @@ func record_answer(topic: String, correct_first_try: bool) -> void:
 
 func topic_stats(topic: String) -> Dictionary:
 	return _data.stats.get(topic, {"attempts": 0, "correct": 0}).duplicate()
+
+
+# --- Bulut senkronizasyonu ---------------------------------------------------
+
+## Sunucuya gönderilen ilerleme (profil ve misafir kimliği hariç; altın sunucuda hesaplanır).
+func progress_dict() -> Dictionary:
+	return {
+		"seenIntro": _data.seenIntro,
+		"levels": _data.levels.duplicate(true),
+		"stats": _data.stats.duplicate(true),
+	}
+
+
+## Başka bir cihazın/sunucunun ilerlemesini birleştirir. Sunucudaki ProgressRules.Merge ile aynı:
+## toplananlar birleşir, tamamlanma VEYA, savaş yıldızı ve istatistikler en büyüğü.
+func merge_progress(other: Dictionary) -> void:
+	var o := _normalized(other)
+	_data.seenIntro = _data.seenIntro or o.seenIntro
+	for id in o.levels:
+		var theirs: Dictionary = o.levels[id]
+		var mine := _level(id)
+		mine.completed = mine.completed or theirs.completed
+		mine.battleStars = maxi(mine.battleStars, theirs.battleStars)
+		for item in theirs.collected:
+			if item not in mine.collected:
+				mine.collected.append(item)
+	for topic in o.stats:
+		var mine: Dictionary = _data.stats.get(topic, {"attempts": 0, "correct": 0})
+		var attempts := maxi(mine.attempts, o.stats[topic].attempts)
+		_data.stats[topic] = {"attempts": attempts, "correct": mini(maxi(mine.correct, o.stats[topic].correct), attempts)}
+
+
+## Misafir ilerlemesi bir hesaba aktarıldıysa profil kimliği (tekrar önerilmesin diye).
+func linked_profile_id() -> String:
+	return _data.linkedProfileId
+
+
+func set_linked_profile_id(id: String) -> void:
+	_data.linkedProfileId = id
 
 
 ## İlk tamamlamada true döner (ileride tek seferlik bölüm ödülü için).
@@ -160,9 +217,9 @@ static func _normalized(src: Dictionary) -> Dictionary:
 		"guestId": _uuid_v4(),
 		"profile": {},
 		"seenIntro": false,
-		"gold": 0,
 		"levels": {},
 		"stats": {},
+		"linkedProfileId": "",
 	}
 	var guest = src.get("guestId")
 	if guest is String and guest.length() == 36:
@@ -179,8 +236,9 @@ static func _normalized(src: Dictionary) -> Dictionary:
 
 	if src.get("seenIntro") is bool:
 		out.seenIntro = src.seenIntro
-	if src.get("gold") is float or src.get("gold") is int:
-		out.gold = maxi(int(src.gold), 0)
+	var linked = src.get("linkedProfileId")
+	if linked is String and (linked.is_empty() or linked.length() == 36):
+		out.linkedProfileId = linked
 
 	var levels = src.get("levels")
 	if levels is Dictionary:

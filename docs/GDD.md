@@ -43,8 +43,17 @@ Splash → Ana Menü (Misafir / Giriş* / Kayıt*) → Profil (takma ad + sını
   Bu dosya öğretmen incelemesinden geçmeden yayınlanmaz (`reviewStatus`).
 - Konu başına çözülen/ilk denemede doğru sayısı kaydedilir (ileride uyarlanabilir zorluk için).
 
+## Hesap ve bulut kayıt (Sprint 3)
+- Hesap yalnızca yetişkine (veli) aittir; çocuklar hesaba profil olarak eklenir (en fazla 5).
+- Hesap ekranlarına ebeveyn kapısından (doğum yılı) geçilerek ulaşılır.
+- Oyun her zaman yerel kayıtla çalışır; hesaplı profilde değişiklikler 2 sn sonra arka planda gönderilir.
+- Birleştirme kuralı (istemci = sunucu): toplananlar birleşir, tamamlanma VEYA, savaş yıldızı ve
+  istatistik en büyüğü. Altın saklanmaz, ilerlemeden hesaplanır → iki cihaz birleşince çoğalmaz.
+- Misafir ilerlemesi "Bu cihazdaki ilerlemeyi aktar" ile yeni profile taşınır.
+- Oturum düşerse oyun durmaz; ilerleme cihazda kalır, tekrar girişte birleşir.
+- Uyum maddeleri: `docs/COMPLIANCE.md`.
+
 ## Sonraki sprintler
-- S3: .NET 10 API, yetişkin hesabı + çocuk profili, misafir ilerlemesini aktarma, bulut kayıt.
 
 ## Açık yasal/uyum maddeleri (doğrulanmadı)
 KVKK açık rıza ve veli onayı akışı, Google Play Families Policy, hesap silme gereksinimi,
