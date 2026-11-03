@@ -13,10 +13,11 @@ public sealed class ProgressRulesTests
     [Fact]
     public void Gold_matches_client_formula()
     {
-        // Godot SaveData ile aynı: altın 1, yıldız 10, ilk zafer 20 + yıldız başına 5.
-        var doc = Doc(true, 3, "coin_1_1", "coin_2_1", "star_3_1");
-        Assert.Equal(2 + 10 + 20 + 15, ProgressRules.ComputeGold(doc));
+        // Godot SaveData ile aynı: altın 1, yıldız 10, hazine 15, ilk zafer 20 + yıldız başına 5.
+        var doc = Doc(true, 3, "coin_1_1", "coin_2_1", "star_3_1", "treasure_5_5");
+        Assert.Equal(62, ProgressRules.ComputeGold(doc));
         Assert.Equal(0, ProgressRules.ComputeGold(new ProgressDocument()));
+        Assert.Empty(ProgressRules.Validate(doc));
     }
 
     [Fact]

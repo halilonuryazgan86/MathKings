@@ -28,10 +28,18 @@ public static partial class ProgressRules
     // İstemcideki SaveData sabitleriyle aynı olmalıdır.
     public const int CoinGold = 1;
     public const int StarGold = 10;
+    public const int TreasureGold = 15;
     public const int BattleFirstWinGold = 20;
     public const int BattleStarGold = 5;
     public const string CoinPrefix = "coin_";
     public const string StarPrefix = "star_";
+    public const string TreasurePrefix = "treasure_";
+
+    public static int ItemGold(string id) =>
+        id.StartsWith(CoinPrefix) ? CoinGold
+        : id.StartsWith(StarPrefix) ? StarGold
+        : id.StartsWith(TreasurePrefix) ? TreasureGold
+        : 0;
 
     public const int MaxLevels = 100;
     public const int MaxCollectedPerLevel = 1000;
@@ -48,8 +56,7 @@ public static partial class ProgressRules
         var gold = 0;
         foreach (var level in doc.Levels.Values)
         {
-            gold += level.Collected.Count(id => id.StartsWith(CoinPrefix)) * CoinGold;
-            gold += level.Collected.Count(id => id.StartsWith(StarPrefix)) * StarGold;
+            gold += level.Collected.Sum(ItemGold);
             if (level.BattleStars > 0)
                 gold += BattleFirstWinGold + level.BattleStars * BattleStarGold;
         }
@@ -107,8 +114,7 @@ public static partial class ProgressRules
             if (!IdPattern().IsMatch(id)) Add($"levels.{id}", "Geçersiz bölüm kimliği.");
             if (level.BattleStars is < 0 or > 3) Add($"levels.{id}.battleStars", "0-3 arası olmalı.");
             if (level.Collected.Count > MaxCollectedPerLevel) Add($"levels.{id}.collected", "Çok fazla öğe.");
-            else if (level.Collected.Any(item => !IdPattern().IsMatch(item)
-                         || !(item.StartsWith(CoinPrefix) || item.StartsWith(StarPrefix))))
+            else if (level.Collected.Any(item => !IdPattern().IsMatch(item) || ItemGold(item) == 0))
                 Add($"levels.{id}.collected", "Geçersiz öğe kimliği.");
         }
 

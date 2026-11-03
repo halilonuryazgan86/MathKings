@@ -14,6 +14,7 @@ extends CanvasLayer
 @onready var _result_stars: Label = %ResultStars
 @onready var _result_battle: Label = %ResultBattle
 @onready var _replay_button: Button = %ReplayButton
+var _next_level_id := ""
 
 
 func _ready() -> void:
@@ -27,9 +28,11 @@ func _ready() -> void:
 	_sfx_button.pressed.connect(func() -> void:
 		Settings.set_sfx(not Settings.sfx_on)
 		_refresh_audio_labels())
-	%MenuButton.pressed.connect(_to_main_menu)
-	%ResultMenuButton.pressed.connect(_to_main_menu)
+	%MenuButton.pressed.connect(_to_map)
+	%ResultMenuButton.pressed.connect(_to_map)
+	%NextButton.pressed.connect(func() -> void: GameState.start_level(_next_level_id))
 	_replay_button.pressed.connect(func() -> void: GameState.start_level(GameState.current_level_id))
+	%Banner.modulate.a = 0.0
 	GameState.gold_changed.connect(set_gold)
 	set_gold(GameState.save.gold())
 	_refresh_audio_labels()
@@ -58,13 +61,25 @@ func close_pause() -> void:
 	get_tree().paused = false
 
 
-func show_result(gold_gained: int, stars: int, total_stars: int, battle_stars: int) -> void:
+## Bölüm başında dünya/bölüm adı kısa süre görünür.
+func show_banner(text: String) -> void:
+	var banner: Label = %Banner
+	banner.text = text
+	var tw := create_tween()
+	tw.tween_property(banner, "modulate:a", 1.0, 0.4)
+	tw.tween_interval(2.0)
+	tw.tween_property(banner, "modulate:a", 0.0, 0.6)
+
+
+func show_result(gold_gained: int, stars: int, total_stars: int, battle_stars: int, next_level_id := "") -> void:
 	_pause_button.hide()
+	_next_level_id = next_level_id
+	%NextButton.visible = not next_level_id.is_empty()
 	_result_gold.text = tr("RESULT_GOLD").format({"gold": gold_gained})
 	_result_stars.text = tr("RESULT_STARS").format({"stars": stars, "total": total_stars})
 	_result_battle.text = tr("RESULT_BATTLE").format({"stars": battle_stars})
 	_result_menu.show()
-	_replay_button.grab_focus()
+	(%NextButton if %NextButton.visible else _replay_button).grab_focus()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -77,8 +92,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
-func _to_main_menu() -> void:
-	GameState.go_to(GameState.SCENE_MAIN_MENU)
+func _to_map() -> void:
+	GameState.go_to(GameState.SCENE_WORLD_MAP)
 
 
 func _refresh_audio_labels() -> void:

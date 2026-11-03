@@ -14,6 +14,7 @@ var _state: BattleState
 var _gen: QuestionGenerator
 var _buttons: Array[Button] = []
 var _busy := false
+var _monster_name := ""
 
 @onready var _root: Control = $Root
 @onready var _arena: Node2D = %Arena
@@ -47,9 +48,15 @@ func is_open() -> bool:
 	return _root.visible
 
 
-func start(grade: int, character_id: String) -> void:
-	_gen = QuestionGenerator.for_grade(grade)
+## world: worlds.json'daki dünya tanımı (soru dosyası, canavar, tema).
+func start(grade: int, character_id: String, world: Dictionary) -> void:
+	_gen = QuestionGenerator.for_grade(grade, world.get("questions", QuestionGenerator.DEFAULT_PATH))
 	_state = BattleState.new()
+	var monster: Dictionary = world.get("monster", {})
+	_monster_name = tr(monster.get("nameKey", "MONSTER_NUMBERS"))
+	_monster.body_color = Color(monster.get("color", "6c5ce7"))
+	%MonsterName.text = _monster_name
+	%Backdrop.backdrop_theme = world.get("theme", "forest")
 	_hero.character_id = character_id
 	_hero.play("idle")
 	_monster.play("idle")
@@ -68,7 +75,9 @@ func _next_question(clear_hint := true) -> void:
 		_hint_panel.hide()
 	var q := _gen.next()
 	_state.start_question(q)
-	_question.text = q.expression + " = ?"
+	_question.text = q.question_text()
+	# Metin soruları daha uzun: küçük yazı + satır kaydırma, panel taşmasın.
+	_question.add_theme_font_size_override("font_size", 64 if q.prompt.is_empty() else 38)
 	for i in _buttons.size():
 		var b := _buttons[i]
 		b.text = str(q.choices[i])
@@ -98,7 +107,7 @@ func _on_answer(button: Button) -> void:
 			_busy = true
 			Sfx.play(self, "wrong")
 			for b in _buttons:
-				var is_answer: bool = b.get_meta("value") == q.answer
+				var is_answer := q.is_correct(b.get_meta("value"))
 				b.disabled = not is_answer
 				b.modulate = CORRECT_TINT if is_answer else WRONG_TINT
 			_show_hint(q.solution_text())
@@ -153,7 +162,7 @@ func _victory() -> void:
 	_monster.play("defeated")
 	_hero.play("cheer")
 	Sfx.play(self, "win")
-	_show_hint(tr("BATTLE_WIN"))
+	_show_hint(tr("BATTLE_WIN").format({"monster": _monster_name}))
 
 	var crystal := Polygon2D.new()
 	crystal.polygon = PackedVector2Array([Vector2(0, -34), Vector2(22, 0), Vector2(0, 34), Vector2(-22, 0)])

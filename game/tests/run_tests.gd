@@ -20,8 +20,12 @@ func _initialize() -> void:
 		test_interrupted_write_recovers,
 		test_tampered_values_normalized,
 		test_layout_parse,
-		test_forest_01_layout,
+		test_all_level_layouts,
 		test_worlds_catalog,
+		test_progression,
+		test_factor_questions_are_correct,
+		test_fraction_questions_are_correct,
+		test_bridge_questions_are_correct,
 		test_input_actions,
 		test_translations,
 		test_generated_questions_are_correct,
@@ -159,25 +163,69 @@ func test_layout_parse() -> void:
 	check(rows[1] == "###", "parçalar yan yana eklenir")
 
 
-func test_forest_01_layout() -> void:
-	var rows := LevelLayout.load_file("res://data/levels/forest_01.txt")
-	var text := "\n".join(rows)
-	check(rows.size() == 14, "orman haritası 14 satır")
-	var same_width := true
-	for r in rows:
-		same_width = same_width and r.length() == rows[0].length()
-	check(same_width, "tüm satırlar aynı genişlikte")
-	check(text.count("P") == 1, "tek başlangıç noktası")
-	check(text.count("G") == 1, "tek Kristal Kapısı")
-	check(text.count("s") == 3, "3 yıldız")
+func _worlds() -> Array:
+	return JSON.parse_string(FileAccess.get_file_as_string("res://data/worlds.json")).worlds
+
+
+func test_all_level_layouts() -> void:
+	const MAX_GAP := 4  # Ölçülen koşarak zıplama 4,8 kare
+	for world in _worlds():
+		for level in world.levels:
+			var rows := LevelLayout.load_file(level.layout)
+			var text := "\n".join(rows)
+			var same_width := rows.size() == 14
+			for r in rows:
+				same_width = same_width and r.length() == rows[0].length()
+			var name: String = level.id
+			check(same_width, "%s: 14 satır, eşit genişlik" % name)
+			check(text.count("P") == 1 and text.count("G") == 1, "%s: tek başlangıç ve tek kapı" % name)
+			check(text.count("s") == 3, "%s: 3 yıldız" % name)
+			# Basılacak yeri (zemin ya da üstte platform) olmayan sütun dizileri zıplanabilir olmalı;
+			# köprü boşluğu ise zıplanarak geçilememeli.
+			var surface: String = rows[11]
+			var longest := 0
+			var run := 0
+			for x in surface.length():
+				var supported := surface[x] in ["#", "=", "_"]  # "_" köprü: ayrıca kontrol edilir
+				for y in range(3, 11):
+					supported = supported or rows[y][x] in ["=", "#"]
+				run = 0 if supported else run + 1
+				longest = maxi(longest, run)
+			check(longest <= MAX_GAP, "%s: köprüsüz boşluklar en fazla %d kare (%d)" % [name, MAX_GAP, longest])
+			if "_" in text:
+				check(text.count("B") == 1 and surface.count("_") > MAX_GAP + 1,
+					"%s: köprü boşluğu zıplanarak geçilemez ve tabelası var" % name)
+	var forest_02 := "\n".join(LevelLayout.load_file("res://data/levels/forest_02.txt"))
+	check(forest_02.count("T") == 1, "forest_02: Hazine Avı sandığı var")
 
 
 func test_worlds_catalog() -> void:
-	var parsed = JSON.parse_string(FileAccess.get_file_as_string("res://data/worlds.json"))
-	check(parsed is Dictionary, "worlds.json okunur")
-	var level: Dictionary = parsed.worlds[0].levels[0]
-	check(parsed.worlds[0].isPremium == false, "ilk dünya ücretsiz")
-	check(FileAccess.file_exists(level.layout), "bölüm haritası dosyası mevcut")
+	var worlds := _worlds()
+	check(worlds.size() == 5, "5 dünya tanımlı (2'si yakında)")
+	for world in worlds:
+		check(world.isPremium == false, "%s ücretsiz" % world.id)
+		if world.get("comingSoon", false):
+			continue
+		check(FileAccess.file_exists(world.questions), "%s soru dosyası mevcut" % world.id)
+		for level in world.levels:
+			check(FileAccess.file_exists(level.layout), "%s haritası mevcut" % level.id)
+			check(TranslationServer.translate(level.nameKey) != level.nameKey, "%s adı çevrilmiş" % level.id)
+
+
+func test_progression() -> void:
+	var worlds := _worlds()
+	var s := SaveData.new()
+	check(Progression.is_unlocked(s, worlds, "forest_01"), "ilk bölüm açık")
+	check(not Progression.is_unlocked(s, worlds, "forest_02"), "ikinci bölüm kilitli")
+	check(not Progression.is_unlocked(s, worlds, "cave_01"), "diğer dünyalar ilk bölümden önce kilitli")
+	s.complete_level("forest_01")
+	check(Progression.is_unlocked(s, worlds, "forest_02"), "ilk bölüm bitince ikinci açılır")
+	check(Progression.is_unlocked(s, worlds, "cave_01") and Progression.is_unlocked(s, worlds, "island_01"),
+		"ilk bölüm bitince diğer dünyalar açılır (sınıftan bağımsız)")
+	check(Progression.next_level_id(worlds, "forest_01") == "forest_02", "sonraki bölüm")
+	check(Progression.next_level_id(worlds, "cave_01") == "", "dünyanın son bölümü")
+	check(not Progression.is_recommended(worlds[1], 4) and Progression.is_recommended(worlds[1], 6),
+		"Çarpanlar Mağarası 4. sınıfa önerilmez ama açıktır")
 
 
 func test_input_actions() -> void:
@@ -223,6 +271,116 @@ func test_generated_questions_are_correct() -> void:
 			if not problems.is_empty():
 				bad.append("%s -> %s" % [q.expression, problems])
 		check(bad.is_empty(), "%d. sınıf: 500 soru doğru, 4 benzersiz seçenek, ipucu tam %s" % [grade, bad.slice(0, 3)])
+
+
+## Ortak kontroller: 4 benzersiz seçenek, cevap seçeneklerde, ipucu/soru metni tam.
+func _common_problems(q: MathQuestion) -> Array:
+	var problems := []
+	if q.choices.size() != 4 or not q.choices.any(func(c) -> bool: return q.is_correct(c)):
+		problems.append("seçenekler")
+	var unique := {}
+	for c in q.choices:
+		unique[str(c)] = true
+	if unique.size() != 4:
+		problems.append("tekrarlı seçenek")
+	var hint := q.hint_text()
+	if hint == q.hint_key or "{" in hint or "{" in q.question_text():
+		problems.append("metin eksik: " + hint)
+	return problems
+
+
+func _report(bad: Array, label: String) -> void:
+	check(bad.is_empty(), "%s %s" % [label, bad.slice(0, 3)])
+
+
+func test_factor_questions_are_correct() -> void:
+	TranslationServer.set_locale("tr")
+	for grade in SaveData.GRADES:
+		var gen := QuestionGenerator.for_grade(grade, "res://data/questions/factors_cave.json", 2000 + grade)
+		var bad := []
+		for i in 500:
+			var q := gen.next()
+			var problems := _common_problems(q)
+			# Bağımsız kontrol: tam olarak bir seçenek koşulu sağlamalı ve o cevap olmalı.
+			var ok_choices := q.choices.filter(func(c: int) -> bool:
+				match q.topic:
+					"multiple": return c % int(q.meta.n) == 0
+					"factor": return c != int(q.meta.n) and int(q.meta.n) % c == 0
+					"prime": return QuestionGenerator.is_prime(c)
+					"divisible": return c % int(q.meta.d) == 0
+				return false)
+			if ok_choices.size() != 1 or not q.is_correct(ok_choices[0]):
+				problems.append("tam bir doğru seçenek yok: %s" % [q.choices])
+			if not problems.is_empty():
+				bad.append("%s %s -> %s" % [q.question_text(), q.choices, problems])
+		_report(bad, "Mağara %d. sınıf: 500 soru, tek doğru seçenek" % grade)
+
+
+func test_fraction_questions_are_correct() -> void:
+	TranslationServer.set_locale("tr")
+	for grade in SaveData.GRADES:
+		var gen := QuestionGenerator.for_grade(grade, "res://data/questions/fractions_island.json", 3000 + grade)
+		var bad := []
+		for i in 500:
+			var q := gen.next()
+			var problems := _common_problems(q)
+			var expected: Variant = _expected_fraction_value(q)
+			var matches := q.choices.filter(func(c) -> bool:
+				if expected is int:
+					return c is int and c == expected
+				return Fraction.same_value(str(c), expected))
+			if matches.size() != 1 or not q.is_correct(matches[0]):
+				problems.append("beklenen %s, seçenekler %s" % [expected, q.choices])
+			for c in q.choices:
+				if c is String and Fraction.parse(c).y <= 0:
+					problems.append("geçersiz kesir " + c)
+			if not problems.is_empty():
+				bad.append("%s -> %s" % [q.question_text(), problems])
+		_report(bad, "Ada %d. sınıf: 500 kesir sorusu, değerce tek doğru seçenek" % grade)
+
+
+## Soruyu bağımsız olarak çözer: kesir metni veya tam sayı döner.
+func _expected_fraction_value(q: MathQuestion) -> Variant:
+	match q.topic:
+		"frac_compare":
+			var best: String = q.choices[0]
+			for c: String in q.choices:
+				if (Fraction.compare(c, best) > 0) == (q.meta.mode == "max") and c != best:
+					best = c
+			return best
+		"frac_equiv":
+			return q.meta.base
+		"frac_add", "frac_sub":
+			var parts := q.expression.split(" ")
+			var x := Fraction.parse(parts[0])
+			var y := Fraction.parse(parts[2])
+			var num := x.x * y.y + (1 if parts[1] == "+" else -1) * y.x * x.y
+			return Fraction.text(num, x.y * y.y)
+		"frac_mul":
+			var parts := q.expression.split(" ")
+			var x := Fraction.parse(parts[0])
+			var y := Fraction.parse(parts[2])
+			return Fraction.text(x.x * y.x, x.y * y.y)
+		"frac_of":
+			return int(q.meta.n) * int(q.meta.a) / int(q.meta.b)
+	return "?"
+
+
+func test_bridge_questions_are_correct() -> void:
+	TranslationServer.set_locale("tr")
+	for grade in SaveData.GRADES:
+		var gen := QuestionGenerator.for_grade(grade, "res://data/questions/fractions_island.json", 4000 + grade, "bridge")
+		var bad := []
+		for i in 300:
+			var q := gen.next()
+			var problems := _common_problems(q)
+			var shown := Fraction.text(int(q.meta.bar_num), int(q.meta.bar_den))
+			var matches := q.choices.filter(func(c: String) -> bool: return Fraction.same_value(c, shown))
+			if matches.size() != 1 or not q.is_correct(matches[0]):
+				problems.append("şekil %s, seçenekler %s" % [shown, q.choices])
+			if not problems.is_empty():
+				bad.append(problems)
+		_report(bad, "Köprü %d. sınıf: 300 şekil sorusu, tek doğru seçenek" % grade)
 
 
 func test_generator_is_deterministic() -> void:
@@ -317,10 +475,10 @@ func test_answer_stats() -> void:
 # --- Bulut senkronizasyonu ---------------------------------------------------
 
 func test_gold_matches_server_formula() -> void:
-	# Sunucudaki ProgressRulesTests.Gold_matches_client_formula ile aynı örnek: 2 + 10 + 20 + 15.
+	# Sunucudaki ProgressRulesTests.Gold_matches_client_formula ile aynı örnek: 2 + 10 + 15 + 20 + 15.
 	var s := SaveData.new({"levels": {"forest_01": {
-		"completed": true, "battleStars": 3, "collected": ["coin_1_1", "coin_2_1", "star_3_1"]}}})
-	check(s.gold() == 47, "altın formülü sunucuyla aynı (47)")
+		"completed": true, "battleStars": 3, "collected": ["coin_1_1", "coin_2_1", "star_3_1", "treasure_5_5"]}}})
+	check(s.gold() == 62, "altın formülü sunucuyla aynı (62)")
 
 
 func test_merge_progress() -> void:

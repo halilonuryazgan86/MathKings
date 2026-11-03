@@ -22,8 +22,8 @@ func start_question(q: MathQuestion) -> void:
 	questions_asked += 1
 
 
-func answer(value: int) -> Result:
-	if value == current.answer:
+func answer(value: Variant) -> Result:
+	if current.is_correct(value):
 		if attempts_on_current == 0:
 			first_try_correct += 1
 		monster_hp = maxi(monster_hp - 1, 0)

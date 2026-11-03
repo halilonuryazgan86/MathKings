@@ -21,6 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Backdrop" type="Control" parent="Root"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,6 +77,8 @@ offset_bottom = 110.0
 grow_horizontal = 0
 
 [node name="MonsterName" type="Label" parent="Root/MonsterBar"]
+unique_name_in_owner = true
+auto_translate_mode = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "BATTLE_MONSTER"
@@ -100,11 +103,13 @@ grow_horizontal = 2
 
 [node name="QuestionLabel" type="Label" parent="Root/QuestionPanel"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(580, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.92, 0.6, 1)
 theme_override_font_sizes/font_size = 64
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
 auto_translate_mode = 2
 
 [node name="HintPanel" type="PanelContainer" parent="Root"]

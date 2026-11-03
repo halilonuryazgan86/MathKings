@@ -36,7 +36,7 @@ func _ready() -> void:
 
 func _on_guest_pressed() -> void:
 	if GameState.save.has_profile():
-		GameState.start_level(GameState.FIRST_LEVEL_ID)
+		GameState.go_to(GameState.SCENE_WORLD_MAP)
 	else:
 		GameState.creating_cloud_profile = false
 		GameState.go_to(GameState.SCENE_PROFILE_SETUP)

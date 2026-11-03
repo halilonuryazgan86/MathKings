@@ -10,8 +10,10 @@ const MAX_NICKNAME_LENGTH := 24
 # Altın kuralları: sunucudaki ProgressRules ile aynı olmalıdır.
 const COIN_PREFIX := "coin_"
 const STAR_PREFIX := "star_"
+const TREASURE_PREFIX := "treasure_"
 const COIN_GOLD := 1
 const STAR_GOLD := 10
+const TREASURE_GOLD := 15
 const BATTLE_FIRST_WIN_GOLD := 20
 const BATTLE_STAR_GOLD := 5
 
@@ -89,6 +91,8 @@ func gold() -> int:
 static func item_gold(item_id: String) -> int:
 	if item_id.begins_with(STAR_PREFIX):
 		return STAR_GOLD
+	if item_id.begins_with(TREASURE_PREFIX):
+		return TREASURE_GOLD
 	if item_id.begins_with(COIN_PREFIX):
 		return COIN_GOLD
 	return 0

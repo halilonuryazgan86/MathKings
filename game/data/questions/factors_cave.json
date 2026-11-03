@@ -1,0 +1,30 @@
+{
+	"world": "factors_cave",
+	"reviewStatus": "draft",
+	"note": "Çarpanlar, katlar, asal sayılar, bölünebilme. Öğretmen incelemesinden geçmeden yayınlanmaz. n/k/a/b: [min, max]; d: liste; range: [min, max].",
+	"grades": {
+		"4": [
+			{ "type": "multiple", "weight": 3, "n": [2, 5], "k": [2, 10] },
+			{ "type": "divisible", "weight": 3, "d": [2, 5, 10], "range": [10, 100] },
+			{ "type": "factor", "weight": 2, "a": [2, 5], "b": [2, 5] }
+		],
+		"5": [
+			{ "type": "multiple", "weight": 2, "n": [2, 9], "k": [2, 12] },
+			{ "type": "divisible", "weight": 3, "d": [2, 3, 5, 10], "range": [20, 500] },
+			{ "type": "factor", "weight": 2, "a": [2, 9], "b": [2, 9] },
+			{ "type": "prime", "weight": 2, "range": [2, 30] }
+		],
+		"6": [
+			{ "type": "multiple", "weight": 1, "n": [3, 12], "k": [3, 15] },
+			{ "type": "divisible", "weight": 3, "d": [2, 3, 4, 5, 6, 9, 10], "range": [50, 999] },
+			{ "type": "factor", "weight": 2, "a": [2, 12], "b": [3, 12] },
+			{ "type": "prime", "weight": 3, "range": [2, 60] }
+		],
+		"7": [
+			{ "type": "multiple", "weight": 1, "n": [6, 15], "k": [5, 20] },
+			{ "type": "divisible", "weight": 3, "d": [3, 4, 6, 9], "range": [100, 9999] },
+			{ "type": "factor", "weight": 2, "a": [3, 15], "b": [3, 15] },
+			{ "type": "prime", "weight": 3, "range": [20, 100] }
+		]
+	}
+}

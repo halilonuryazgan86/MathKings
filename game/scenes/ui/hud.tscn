@@ -122,7 +122,7 @@ text = "PAUSE_SFX_ON"
 [node name="MenuButton" type="Button" parent="PauseMenu/Center/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "PAUSE_MAIN_MENU"
+text = "RESULT_MAP"
 
 [node name="ResultMenu" type="Control" parent="."]
 unique_name_in_owner = true
@@ -193,4 +193,26 @@ text = "RESULT_REPLAY"
 [node name="ResultMenuButton" type="Button" parent="ResultMenu/Center/Panel/VBox/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "PAUSE_MAIN_MENU"
+text = "RESULT_MAP"
+
+[node name="NextButton" type="Button" parent="ResultMenu/Center/Panel/VBox/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "RESULT_NEXT"
+
+[node name="Banner" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -420.0
+offset_top = 110.0
+offset_right = 420.0
+offset_bottom = 170.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+auto_translate_mode = 2

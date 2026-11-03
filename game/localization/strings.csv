@@ -87,8 +87,7 @@ OWL_INTRO_3,Altınları ve yıldızları topla. Ormanın sonundaki Kristal Kapı
 OWL_CONTROLS_TOUCH,Soldaki oklarla yürü. Sağdaki düğmeyle zıpla.
 OWL_CONTROLS_KEYS,Ok tuşları ya da A/D ile yürü. Boşluk tuşuyla zıpla.
 OWL_GATE_1,Harika iş çıkardın! Kristal Kapısı'na ulaştın.
-OWL_GATE_2,Ama kapıyı Sayı Canavarı koruyor. Doğru cevaplarla onu yenelim!
-BATTLE_MONSTER,Sayı Canavarı
+OWL_GATE_2,Ama kapıyı {monster} koruyor. Doğru cevaplarla onu yenelim!
 BATTLE_INTRO,Her doğru cevap canavara sihirli bir yıldız fırlatır. Hazır mısın?
 BATTLE_EXIT,Çık
 BATTLE_CONTINUE,Devam
@@ -99,7 +98,7 @@ BATTLE_PRAISE_4,Doğru!
 BATTLE_ALMOST,Neredeyse!
 BATTLE_SOLUTION,Cevap: {expr} = {answer}. Haydi yeni bir soru deneyelim!
 BATTLE_VICTORY,Zafer!
-BATTLE_WIN,Başardın! Sayı Canavarı artık dostun. İlk kristal senin!
+BATTLE_WIN,Başardın! {monster} artık dostun. Kristal senin!
 HINT_ADD_SPLIT,İpucu: {a} sayısına önce {big} ekle. Sonra {small} ekle.
 HINT_ADD_SIMPLE,İpucu: Sayıları alt alta yaz ve birler basamağından başlayarak topla.
 HINT_SUB_SPLIT,İpucu: {a} sayısından önce {big} çıkar. Sonra {small} çıkar.
@@ -124,3 +123,61 @@ RESULT_STARS,Yıldızlar: {stars} / {total}
 RESULT_REPLAY,Tekrar Oyna
 WORLD_NUMBERS_FOREST,Sayılar Ormanı
 LEVEL_FOREST_01,Orman Yolu
+WORLD_FACTORS_CAVE,Çarpanlar Mağarası
+WORLD_FRACTIONS_ISLAND,Kesirler Adası
+WORLD_GEOMETRY_TEMPLE,Geometri Tapınağı
+WORLD_LOGIC_CASTLE,Zekâ Kalesi
+LEVEL_FOREST_02,Gizli Patika
+LEVEL_CAVE_01,Kristal Tüneli
+LEVEL_ISLAND_01,Köprülü Sahil
+MONSTER_NUMBERS,Sayı Canavarı
+MONSTER_FACTORS,Çarpan Canavarı
+MONSTER_FRACTIONS,Kesir Canavarı
+MAP_TITLE,Krallık Haritası
+MAP_GRADES,Önerilen: {from}-{to}. sınıf
+MAP_FITS,Senin sınıfına uygun
+MAP_EXPLORE,İstersen keşfet! Zorunlu değil.
+MAP_COMING_SOON,Yakında
+MAP_LEVEL,{name}\nYıldız {stars}/3 · Savaş {battle}/3
+MAP_LOCKED,{name}\nKilitli
+RESULT_MAP,Harita
+RESULT_NEXT,Sonraki Bölüm
+TREASURE_QUIT,Vazgeç
+TREASURE_INTRO,Hazine haritası! Her ipucunun cevabı bir taşın üzerinde yazıyor. Doğru taşlara basarak hazineye ulaş.
+TREASURE_STEP,İpucu {i}/{n}
+TREASURE_CLUE,{expr} = ?
+TREASURE_FOUND_TITLE,Hazineyi buldun!
+TREASURE_FOUND,Harika! Sandıktan {gold} altın çıktı.
+BRIDGE_INTRO,Suyu geçmek için köprü kuralım! Şekildeki boyalı kısmı gösteren kesri seç. Her doğru cevap bir tahta ekler.
+BRIDGE_DONE_TITLE,Köprü tamam!
+BRIDGE_DONE,Köprü hazır. Artık karşıya geçebilirsin!
+BATTLE_SOLUTION_SHORT,Doğru cevap: {answer}. Haydi yeni bir soru deneyelim!
+Q_MULTIPLE,Hangisi {n} sayısının bir katıdır?
+Q_FACTOR,Hangisi {n} sayısının bir çarpanıdır?
+Q_PRIME,Hangisi asal sayıdır?
+Q_DIVISIBLE,Hangisi {d} ile tam bölünür?
+Q_FRAC_MAX,Hangi kesir en büyüktür?
+Q_FRAC_MIN,Hangi kesir en küçüktür?
+Q_FRAC_EQUIV,Hangisi {f} kesrine denktir?
+Q_FRAC_OF,{n} sayısının {f} kadarı kaçtır?
+Q_BAR_EXACT,Boyalı kısım hangi kesirle gösterilir?
+Q_BAR_EQUIV,Boyalı kısma denk olan sade kesir hangisi?
+HINT_MULTIPLE,"İpucu: {n} sayısının katları {n}, {n2}, {n3} diye gider. Seçenekleri {n} ile bölmeyi dene: kalan 0 olmalı."
+HINT_FACTOR,İpucu: {n} sayısını seçeneklere böl. Kalansız bölen sayı bir çarpandır.
+HINT_PRIME,"İpucu: Asal sayının yalnızca iki böleni vardır: 1 ve kendisi. Seçenekleri 2, 3, 5 ve 7 ile bölmeyi dene."
+HINT_RULE_2,İpucu: Birler basamağı çift olan sayılar 2 ile tam bölünür.
+HINT_RULE_3,İpucu: Rakamlarının toplamı 3'ün katı olan sayılar 3 ile tam bölünür.
+HINT_RULE_4,İpucu: Son iki basamağı 4'ün katı olan sayılar 4 ile tam bölünür.
+HINT_RULE_5,İpucu: Birler basamağı 0 ya da 5 olan sayılar 5 ile tam bölünür.
+HINT_RULE_6,İpucu: Hem 2 hem de 3 ile bölünen sayılar 6 ile tam bölünür.
+HINT_RULE_9,İpucu: Rakamlarının toplamı 9'un katı olan sayılar 9 ile tam bölünür.
+HINT_RULE_10,İpucu: Birler basamağı 0 olan sayılar 10 ile tam bölünür.
+HINT_FRAC_SAME_DEN,İpucu: Paydalar aynıysa payı büyük olan kesir daha büyüktür.
+HINT_FRAC_COMPARE,İpucu: Kesirleri ortak paydaya genişlet ya da her birini 1/2 ile karşılaştır.
+HINT_FRAC_EQUIV,İpucu: Payı ve paydayı aynı sayıyla çarparsan denk kesir bulursun. {k} ile çarpmayı dene.
+HINT_FRAC_ADD,İpucu: Paydalar aynı. Yalnızca payları topla: {a} + {b}. Payda {d} olarak kalır.
+HINT_FRAC_SUB,İpucu: Paydalar aynı. Yalnızca payları çıkar: {a} - {b}. Payda {d} olarak kalır.
+HINT_FRAC_MUL,İpucu: Payları çarp ({a} × {c}) ve paydaları çarp ({b} × {d}).
+HINT_FRAC_OF,İpucu: Önce {n} sayısını {b} eşit parçaya böl. Her parça {part} eder. Sonra {a} parça al.
+HINT_BAR,İpucu: Şekilde {d} eşit parça var ve {n} tanesi boyalı.
+HINT_BAR_EQUIV,İpucu: Şekilde {d} eşit parça var ve {n} tanesi boyalı. Payı ve paydayı {k} ile bölerek sadeleştir.

@@ -3,7 +3,7 @@ extends Node2D
 ## Sayı Canavarı: korkutucu değil, sevimli ve şakacı. Yenilince dosta dönüşür.
 ## Orijin ayak ortasıdır. Animasyonlar: idle, hit, taunt, defeated.
 
-const BODY := Color("6c5ce7")
+var body_color := Color("6c5ce7")
 const BELLY := Color("a29bfe")
 const FRIENDLY := Color("ff8fb1")
 const INK := Color("2b2118")
@@ -30,19 +30,19 @@ func _draw() -> void:
 	var bob := sin(_t * 2.5) * 4.0
 	var off := Vector2.ZERO
 	var squash := Vector2.ONE
-	var body := BODY
+	var body := body_color
 	var happy := false
 	match animation:
 		"hit":
 			off.x = sin(_t * 60.0) * 10.0 * (1.0 - _t / SHORT_DURATION)
-			body = BODY.lerp(Color.WHITE, maxf(0.0, 1.0 - _t * 3.0))
+			body = body_color.lerp(Color.WHITE, maxf(0.0, 1.0 - _t * 3.0))
 		"taunt":
 			bob = -absf(sin(_t * 14.0)) * 16.0
 			squash = Vector2(1.06, 0.94)
 		"defeated":
 			var k := minf(_t * 2.0, 1.0)
 			squash = Vector2.ONE * lerpf(1.0, 0.75, k)
-			body = BODY.lerp(FRIENDLY, k)
+			body = body_color.lerp(FRIENDLY, k)
 			happy = true
 	draw_set_transform(off + Vector2(0, bob), 0.0, squash)
 

@@ -1,13 +1,24 @@
 class_name MathQuestion
 extends RefCounted
-## Tek bir matematik sorusu: ifade, doğru cevap, 4 seçenek ve öğretici ipucu.
+## Tek bir matematik sorusu: ifade veya soru metni, doğru cevap, 4 seçenek ve öğretici ipucu.
+## Cevap sayı (int) ya da kesir metni ("3/4") olabilir.
 
 var topic := ""
-var expression := ""          # Ekranda görünen ifade, ör. "5 + 3 × 4"
-var answer := 0
-var choices: Array[int] = []
+var expression := ""          # İşlem sorularında ekranda görünen ifade, ör. "5 + 3 × 4"
+var prompt := ""              # Metin sorularında soru cümlesi, ör. "Hangisi asal sayıdır?"
+var answer: Variant = 0
+var choices: Array = []
 var hint_key := ""
 var hint_args := {}
+var meta := {}                # Soru parametreleri (görsel model, doğrulama testleri için)
+
+
+func question_text() -> String:
+	return prompt if not prompt.is_empty() else expression + " = ?"
+
+
+func is_correct(value: Variant) -> bool:
+	return typeof(value) == typeof(answer) and value == answer
 
 
 func hint_text() -> String:
@@ -15,6 +26,8 @@ func hint_text() -> String:
 
 
 func solution_text() -> String:
+	if not prompt.is_empty():
+		return TranslationServer.translate("BATTLE_SOLUTION_SHORT").format({"answer": answer})
 	return _keep_together(TranslationServer.translate("BATTLE_SOLUTION").format(
 		{"expr": expression, "answer": answer}))
 

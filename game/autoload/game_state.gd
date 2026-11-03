@@ -12,6 +12,7 @@ const SCENE_LEVEL := "res://scenes/levels/level.tscn"
 const SCENE_PARENTAL_GATE := "res://scenes/account/parental_gate.tscn"
 const SCENE_ACCOUNT := "res://scenes/account/account.tscn"
 const SCENE_PROFILE_PICKER := "res://scenes/account/profile_picker.tscn"
+const SCENE_WORLD_MAP := "res://scenes/menu/world_map.tscn"
 const FIRST_LEVEL_ID := "forest_01"
 const SYNC_DELAY_SEC := 2.0
 
@@ -23,7 +24,9 @@ var notice_key := ""                 # Ana menüde bir kez gösterilecek bildiri
 var account_mode := "login"          # Hesap ekranının açılış modu
 var after_gate_scene := SCENE_ACCOUNT
 var creating_cloud_profile := false  # Profil kurulumu hesaba yeni profil ekliyor
+var _worlds: Array = []
 var _levels := {}  # level_id -> level tanımı (worlds.json)
+var _level_world := {}  # level_id -> dünya tanımı
 var _sync_queued := false
 
 
@@ -159,6 +162,28 @@ func level_layout_path(level_id: String) -> String:
 	return _levels.get(level_id, {}).get("layout", "")
 
 
+func worlds() -> Array:
+	return _worlds
+
+
+func world_for_level(level_id: String) -> Dictionary:
+	return _level_world.get(level_id, {})
+
+
+func level_name(level_id: String) -> String:
+	return tr(_levels.get(level_id, {}).get("nameKey", level_id))
+
+
+func is_level_unlocked(level_id: String) -> bool:
+	return Progression.is_unlocked(save, _worlds, level_id)
+
+
+## Sonraki bölüm (aynı dünyada ve açıksa); yoksa boş.
+func next_unlocked_level(level_id: String) -> String:
+	var next := Progression.next_level_id(_worlds, level_id)
+	return next if not next.is_empty() and is_level_unlocked(next) else ""
+
+
 func start_level(level_id: String) -> void:
 	current_level_id = level_id
 	go_to(SCENE_LEVEL)
@@ -190,6 +215,8 @@ func _load_worlds() -> void:
 	if not (parsed is Dictionary and parsed.get("worlds") is Array):
 		push_error("İçerik kataloğu okunamadı: %s" % WORLDS_PATH)
 		return
-	for world in parsed.worlds:
+	_worlds = parsed.worlds
+	for world in _worlds:
 		for level in world.get("levels", []):
 			_levels[level.id] = level
+			_level_world[level.id] = world

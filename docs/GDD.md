@@ -53,6 +53,18 @@ Splash → Ana Menü (Misafir / Giriş* / Kayıt*) → Profil (takma ad + sını
 - Oturum düşerse oyun durmaz; ilerleme cihazda kalır, tekrar girişte birleşir.
 - Uyum maddeleri: `docs/COMPLIANCE.md`.
 
+## Macera genişletme (Sprint 4)
+- Krallık Haritası: dünya içi bölümler sırayla açılır; ilk bölüm bitince diğer dünyalar açılır.
+  Sınıf etiketi ("Önerilen: 5-7. sınıf") yalnızca bilgilendirir, hiçbir dünya zorunlu değildir.
+- Bölümler: Orman Yolu, Gizli Patika (Hazine Avı), Kristal Tüneli (Çarpanlar Mağarası),
+  Köprülü Sahil (Kesirler Adası, Kesir Köprüsü). Geometri Tapınağı ve Zekâ Kalesi "Yakında".
+- Hazine Avı (isteğe bağlı): 3 işlem ipucu, cevabı yazan taşa basılır; hazine 15 altın, bir kez.
+- Kesir Köprüsü (zorunlu geçiş): şekil modelindeki boyalı kısım ↔ kesir; 3 doğru = köprü.
+  4. sınıf aynı kesri, 5+ sınıf sade denk kesri arar.
+- Mağara soruları: kat, çarpan, asal, bölünebilme kuralları. Ada soruları: karşılaştırma,
+  denk kesir, toplama/çıkarma (eş payda), bir sayının kesri, kesir çarpımı (6-7).
+- Mini oyunlar da aynı öğretici akışı kullanır: ipucu → çözüm, ceza yok.
+
 ## Sonraki sprintler
 
 ## Açık yasal/uyum maddeleri (doğrulanmadı)

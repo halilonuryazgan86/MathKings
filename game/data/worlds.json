@@ -5,14 +5,60 @@
 			"nameKey": "WORLD_NUMBERS_FOREST",
 			"packId": "core",
 			"isPremium": false,
+			"theme": "forest",
 			"grades": [4, 5, 6, 7],
+			"questions": "res://data/questions/numbers_forest.json",
+			"monster": { "nameKey": "MONSTER_NUMBERS", "color": "6c5ce7" },
 			"levels": [
-				{
-					"id": "forest_01",
-					"nameKey": "LEVEL_FOREST_01",
-					"layout": "res://data/levels/forest_01.txt"
-				}
+				{ "id": "forest_01", "nameKey": "LEVEL_FOREST_01", "layout": "res://data/levels/forest_01.txt" },
+				{ "id": "forest_02", "nameKey": "LEVEL_FOREST_02", "layout": "res://data/levels/forest_02.txt" }
 			]
+		},
+		{
+			"id": "factors_cave",
+			"nameKey": "WORLD_FACTORS_CAVE",
+			"packId": "core",
+			"isPremium": false,
+			"theme": "cave",
+			"grades": [5, 6, 7],
+			"questions": "res://data/questions/factors_cave.json",
+			"monster": { "nameKey": "MONSTER_FACTORS", "color": "e17055" },
+			"levels": [
+				{ "id": "cave_01", "nameKey": "LEVEL_CAVE_01", "layout": "res://data/levels/cave_01.txt" }
+			]
+		},
+		{
+			"id": "fractions_island",
+			"nameKey": "WORLD_FRACTIONS_ISLAND",
+			"packId": "core",
+			"isPremium": false,
+			"theme": "island",
+			"grades": [4, 5, 6, 7],
+			"questions": "res://data/questions/fractions_island.json",
+			"monster": { "nameKey": "MONSTER_FRACTIONS", "color": "00a8a8" },
+			"levels": [
+				{ "id": "island_01", "nameKey": "LEVEL_ISLAND_01", "layout": "res://data/levels/island_01.txt" }
+			]
+		},
+		{
+			"id": "geometry_temple",
+			"nameKey": "WORLD_GEOMETRY_TEMPLE",
+			"packId": "core",
+			"isPremium": false,
+			"comingSoon": true,
+			"theme": "forest",
+			"grades": [5, 6, 7],
+			"levels": []
+		},
+		{
+			"id": "logic_castle",
+			"nameKey": "WORLD_LOGIC_CASTLE",
+			"packId": "core",
+			"isPremium": false,
+			"comingSoon": true,
+			"theme": "forest",
+			"grades": [6, 7],
+			"levels": []
 		}
 	]
 }
