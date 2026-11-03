@@ -25,8 +25,11 @@ func _ready() -> void:
 	active_profile_id = s.get("activeProfileId", "")
 
 
+## Debug: geliştirme adresi (Android'de yerel ağ). Release: yalnızca HTTPS üretim adresi.
 func base_url() -> String:
-	return str(ProjectSettings.get_setting("mathkings/api/base_url", "http://localhost:5055")).trim_suffix("/")
+	if OS.is_debug_build():
+		return str(ProjectSettings.get_setting("mathkings/api/base_url", "http://localhost:5055")).trim_suffix("/")
+	return str(ProjectSettings.get_setting("mathkings/api/release_base_url", "")).trim_suffix("/")
 
 
 ## Release derlemelerde her zaman false: sertifika doğrulaması kapatılamaz.

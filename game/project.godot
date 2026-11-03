@@ -17,6 +17,7 @@ config/quit_on_go_back=false
 [autoload]
 
 Settings="*res://autoload/settings.gd"
+Music="*res://autoload/music.gd"
 Cloud="*res://autoload/cloud.gd"
 GameState="*res://autoload/game_state.gd"
 
@@ -69,6 +70,7 @@ locale/fallback="tr"
 api/base_url="http://localhost:5055"
 api/base_url.android="https://192.168.1.39:7258"
 api/allow_dev_certificate=true
+api/release_base_url="https://api.mathkings.example"
 
 [rendering]
 

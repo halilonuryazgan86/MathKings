@@ -40,6 +40,7 @@ func _initialize() -> void:
 		test_progress_dict_has_no_personal_data,
 		test_session_store_is_encrypted,
 		test_cloud_error_messages,
+		test_music_tracks,
 	]
 	for t: Callable in tests:
 		_cleanup()
@@ -536,6 +537,20 @@ func test_cloud_error_messages() -> void:
 		"sunucu doğrulama mesajı gösterilir")
 	check(cloud.error_message(401, {"detail": "E-posta veya şifre hatalı."}) == "E-posta veya şifre hatalı.", "sunucu detay mesajı")
 	check(cloud.error_message(401, null, "SESSION_EXPIRED") == TranslationServer.translate("SESSION_EXPIRED"), "oturum süresi doldu mesajı")
+
+
+func test_music_tracks() -> void:
+	for track in MusicSynth.TRACKS:
+		var started := Time.get_ticks_msec()
+		var wav := MusicSynth.render(track)
+		var ms := Time.get_ticks_msec() - started
+		var peak := 0
+		for i in range(0, wav.data.size(), 2):
+			peak = maxi(peak, absi(wav.data.decode_s16(i)))
+		var seconds := wav.data.size() / 2.0 / MusicSynth.RATE
+		check(wav.loop_mode == AudioStreamWAV.LOOP_FORWARD and seconds > 5.0,
+			"müzik '%s': döngülü, %.1f sn (üretim %d ms)" % [track, seconds, ms])
+		check(peak > 3000 and peak < 32000, "müzik '%s': duyulur ve kırpılmıyor (tepe %d)" % [track, peak])
 
 
 func test_translations() -> void:

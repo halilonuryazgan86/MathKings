@@ -37,6 +37,7 @@ func _ready() -> void:
 	_world = GameState.world_for_level(level_id)
 	_theme_row = THEME_ROWS.get(_world.get("theme", "forest"), 0)
 	%Forest.backdrop_theme = _world.get("theme", "forest")
+	Music.play(_world.get("theme", "forest"))
 	_rows = LevelLayout.load_file(GameState.level_layout_path(level_id))
 	if _rows.is_empty():
 		GameState.go_to.call_deferred(GameState.SCENE_WORLD_MAP)
@@ -196,6 +197,7 @@ func _on_gate_reached() -> void:
 	await _owl.finished
 	_battle.start(GameState.save.grade(), GameState.save.character(), _world)
 	var battle_stars: int = await _battle.finished
+	Music.play(_world.get("theme", "forest"))
 	var reward := GameState.finish_battle(level_id, battle_stars)
 	get_tree().paused = true
 	_hud.show_result(_gold_this_run + reward, GameState.save.star_count(level_id), _stars_total, battle_stars,

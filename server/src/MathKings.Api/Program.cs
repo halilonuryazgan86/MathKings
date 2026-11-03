@@ -1,13 +1,37 @@
+using System.Net;
 using System.Threading.RateLimiting;
 using MathKings.Api.Auth;
 using MathKings.Api.Data;
 using MathKings.Api.Profiles;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 var env = builder.Environment;
+var isLocal = env.IsDevelopment() || env.IsEnvironment("Testing");
+
+// Ters proxy (nginx vb.) arkasında gerçek istemci IP'si: istek sınırı herkesi tek IP saymasın.
+// Yalnızca açıkça güvenilen proxy adreslerinden gelen başlıklar kabul edilir.
+var knownProxies = config.GetSection("ReverseProxy:KnownProxies").Get<string[]>() ?? [];
+if (knownProxies.Length > 0)
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(o =>
+    {
+        o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        foreach (var ip in knownProxies)
+            o.KnownProxies.Add(IPAddress.Parse(ip));
+    });
+}
+
+// Oturum belirteçlerini şifreleyen anahtarlar kalıcı olmalı; yoksa her yeniden başlatmada oturumlar düşer.
+var keysPath = config["DataProtection:KeysPath"];
+if (!string.IsNullOrEmpty(keysPath))
+    builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keysPath)).SetApplicationName("MathKings");
+else if (!isLocal)
+    throw new InvalidOperationException("Üretimde DataProtection:KeysPath zorunludur.");
 
 builder.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = 1_000_000);
 
@@ -51,7 +75,7 @@ if (config["Email:Mode"] == "Smtp")
 }
 else
 {
-    if (!env.IsDevelopment() && !env.IsEnvironment("Testing"))
+    if (!isLocal)
         throw new InvalidOperationException("Üretimde Email:Mode=Smtp ve SMTP ayarları zorunludur.");
     builder.Services.AddSingleton<IAccountEmailSender>(sp => sp.GetRequiredService<LogEmailSender>());
 }
@@ -69,6 +93,20 @@ builder.Services.AddRateLimiter(o =>
 });
 
 var app = builder.Build();
+
+if (knownProxies.Length > 0)
+    app.UseForwardedHeaders();
+
+// Temel güvenlik başlıkları; yanıtlar kişisel veri içerebileceği için önbelleğe alınmaz.
+app.Use(async (ctx, next) =>
+{
+    var h = ctx.Response.Headers;
+    h.XContentTypeOptions = "nosniff";
+    h.XFrameOptions = "DENY";
+    h["Referrer-Policy"] = "no-referrer";
+    h.CacheControl = "no-store";
+    await next();
+});
 
 if (env.IsDevelopment())
 {

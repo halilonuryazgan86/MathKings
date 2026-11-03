@@ -50,6 +50,7 @@ func is_open() -> bool:
 
 ## world: worlds.json'daki dünya tanımı (soru dosyası, canavar, tema).
 func start(grade: int, character_id: String, world: Dictionary) -> void:
+	Music.play("battle")
 	_gen = QuestionGenerator.for_grade(grade, world.get("questions", QuestionGenerator.DEFAULT_PATH))
 	_state = BattleState.new()
 	var monster: Dictionary = world.get("monster", {})

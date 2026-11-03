@@ -19,3 +19,6 @@ obj/
 # OS / editör
 .DS_Store
 Thumbs.db
+
+# Android Gradle derleme şablonu (Godot export şablonundan yeniden kurulur)
+game/android/

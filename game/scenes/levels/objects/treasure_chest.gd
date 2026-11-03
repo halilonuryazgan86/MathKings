@@ -22,6 +22,7 @@ func _ready() -> void:
 	cs.shape = shape
 	cs.position = Vector2(0, -32)
 	add_child(cs)
+	add_child(OffscreenPause.make(Rect2(-50, -80, 100, 80)))
 	body_entered.connect(func(body: Node2D) -> void:
 		if body is Player and not opened:
 			reached.emit(self))

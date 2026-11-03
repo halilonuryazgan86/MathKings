@@ -41,9 +41,13 @@ godot --headless --path game -s res://tools/e2e_cloud.gd   # uçtan uca; API ça
 godot --headless --path game --export-debug "Android" builds/MathKings-debug.apk
 adb install -r builds/MathKings-debug.apk
 ```
+Google Play için imzalı AAB: `scripts\build-release.ps1` — ayrıntılar ve yayın listesi `docs/RELEASE.md`.
+
+## Performans
+`godot --path game -s res://tools/perf_probe.gd` (pencereli): her bölümde V-Sync kapalı FPS ölçer.
 
 ## Klasörler
-- `game/autoload` — `GameState` (kayıt, profil, senkron), `Cloud` (API + oturum), `Settings` (ses)
+- `game/autoload` — `GameState` (kayıt, profil, senkron), `Cloud` (API + oturum), `Settings` (ses), `Music`
 - `game/logic` — sahneden bağımsız, test edilebilir mantık
 - `game/scenes` — sahneler ve scriptleri (`account/`: ebeveyn kapısı, hesap, profil seçimi)
 - `game/data` — dünya kataloğu, bölüm haritaları, soru şablonları

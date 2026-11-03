@@ -5,6 +5,7 @@ extends Control
 
 
 func _ready() -> void:
+	Music.play("menu")
 	%BackButton.pressed.connect(_back)
 	var grade := GameState.save.grade()
 	for world in GameState.worlds():

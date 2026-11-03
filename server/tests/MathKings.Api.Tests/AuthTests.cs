@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using MathKings.Api.Data;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -86,6 +88,34 @@ public sealed class AuthTests(ApiFactory api, LowRateLimitFactory lowLimitApi)
 
         Assert.Equal(HttpStatusCode.TooManyRequests, locked.StatusCode);
         Assert.Equal("locked_out", await Code(locked));
+    }
+
+    [Fact]
+    public async Task Responses_have_security_headers_and_are_not_cached()
+    {
+        var res = await _client.GetAsync("/health");
+        Assert.Equal("nosniff", res.Headers.GetValues("X-Content-Type-Options").Single());
+        Assert.Equal("DENY", res.Headers.GetValues("X-Frame-Options").Single());
+        Assert.True(res.Headers.CacheControl?.NoStore);
+    }
+
+    [Fact]
+    public void Production_refuses_to_start_without_smtp_and_key_storage()
+    {
+        using var prod = new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+        {
+            b.UseEnvironment("Production");
+            b.UseSetting("ConnectionStrings:Default", "Host=localhost;Database=yok");
+        });
+        var ex = Assert.ThrowsAny<Exception>(() => prod.CreateClient());
+        Assert.Contains("zorunlu", ex.ToString());
+    }
+
+    [Fact]
+    public async Task Dev_code_endpoint_is_not_available_outside_development()
+    {
+        var res = await _client.GetAsync("/dev/last-code?email=a@b.com&kind=confirm");
+        Assert.Equal(HttpStatusCode.NotFound, res.StatusCode);
     }
 
     [Fact]

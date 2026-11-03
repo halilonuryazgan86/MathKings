@@ -10,6 +10,7 @@ var kind := Kind.COIN
 var item_id := ""
 var already_collected := false
 var _t := 0.0
+var _art := Node2D.new()  # Bir kez çizilir; sallanma yalnızca konumla yapılır (ucuz).
 
 
 func _ready() -> void:
@@ -20,6 +21,13 @@ func _ready() -> void:
 	var cs := CollisionShape2D.new()
 	cs.shape = shape
 	add_child(cs)
+	_art.draw.connect(func() -> void:
+		if kind == Kind.COIN:
+			draw_coin(_art, Vector2.ZERO, 18.0)
+		else:
+			draw_star(_art, Vector2.ZERO, 26.0))
+	add_child(_art)
+	add_child(OffscreenPause.make(Rect2(-32, -40, 64, 80)))
 	_t = randf() * TAU
 	if already_collected:
 		modulate.a = 0.35
@@ -32,15 +40,7 @@ func gold_value() -> int:
 
 func _process(delta: float) -> void:
 	_t += delta
-	queue_redraw()
-
-
-func _draw() -> void:
-	var offset := Vector2(0, sin(_t * 3.0) * 4.0)
-	if kind == Kind.COIN:
-		draw_coin(self, offset, 18.0)
-	else:
-		draw_star(self, offset, 26.0)
+	_art.position.y = sin(_t * 3.0) * 4.0
 
 
 func _on_body_entered(body: Node2D) -> void:

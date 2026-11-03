@@ -10,6 +10,7 @@ extends Control
 
 
 func _ready() -> void:
+	Music.play("menu")
 	var save := GameState.save
 	var has_profile := save.has_profile()
 	_guest_button.text = "MENU_CONTINUE" if has_profile else "MENU_GUEST"

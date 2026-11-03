@@ -17,6 +17,7 @@ func _ready() -> void:
 	cs.shape = shape
 	cs.position = Vector2(0, -90)
 	add_child(cs)
+	add_child(OffscreenPause.make(Rect2(-90, -280, 180, 280)))
 	body_entered.connect(func(body: Node2D) -> void:
 		if body is Player:
 			set_deferred("monitoring", false)
