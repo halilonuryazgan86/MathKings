@@ -67,6 +67,8 @@ locale/fallback="tr"
 [mathkings]
 
 api/base_url="http://localhost:5055"
+api/base_url.android="https://192.168.1.39:7258"
+api/allow_dev_certificate=true
 
 [rendering]
 

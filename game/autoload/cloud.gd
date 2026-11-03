@@ -29,6 +29,12 @@ func base_url() -> String:
 	return str(ProjectSettings.get_setting("mathkings/api/base_url", "http://localhost:5055")).trim_suffix("/")
 
 
+## Release derlemelerde her zaman false: sertifika doğrulaması kapatılamaz.
+func _allow_dev_certificate() -> bool:
+	return OS.is_debug_build() and base_url().begins_with("https://") \
+		and ProjectSettings.get_setting("mathkings/api/allow_dev_certificate", false) == true
+
+
 func is_logged_in() -> bool:
 	return not _refresh_token.is_empty()
 
@@ -148,6 +154,9 @@ func _ensure_access_token() -> String:
 func _send(method: int, url_path: String, body: Variant, auth: bool) -> Dictionary:
 	var http := HTTPRequest.new()
 	http.timeout = TIMEOUT_SEC
+	if _allow_dev_certificate():
+		# Yalnızca debug derlemede: yerel ağdaki API'nin .NET geliştirme sertifikası kabul edilir.
+		http.set_tls_options(TLSOptions.client_unsafe())
 	add_child(http)
 	var headers := PackedStringArray(["Content-Type: application/json", "Accept: application/json"])
 	if auth:

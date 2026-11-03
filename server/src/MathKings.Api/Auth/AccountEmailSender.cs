@@ -27,10 +27,11 @@ public sealed class LogEmailSender(ILogger<LogEmailSender> log) : IAccountEmailS
     public Task SendPasswordResetCodeAsync(string email, string code) => Record(email, "reset", code);
     public Task SendAccountExistsAsync(string email) => Record(email, "exists", null);
 
-    private Task Record(string email, string kind, string? code)
+    internal Task Record(string email, string kind, string? code, bool writeLog = true)
     {
         _sent.GetOrAdd(email, _ => new()).Enqueue(new SentEmail(kind, code));
-        log.LogInformation("[DEV E-POSTA] {Email} -> {Kind} {Code}", email, kind, code);
+        if (writeLog)
+            log.LogInformation("[DEV E-POSTA] {Email} -> {Kind} {Code}", email, kind, code);
         return Task.CompletedTask;
     }
 }

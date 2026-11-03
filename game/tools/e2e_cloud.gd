@@ -11,6 +11,7 @@ var _passed := 0
 var _failed := 0
 var cloud: Node
 var game: Node
+var _base_url := "http://localhost:5055"
 
 
 func _initialize() -> void:
@@ -29,6 +30,10 @@ func check(condition: bool, label: String) -> void:
 func _run() -> void:
 	cloud = root.get_node("Cloud")
 	game = root.get_node("GameState")
+	# İsteğe bağlı: -- https://192.168.1.39:7258 (telefonun kullanacağı adres)
+	if OS.get_cmdline_user_args().size() > 0:
+		_base_url = OS.get_cmdline_user_args()[0]
+		ProjectSettings.set_setting("mathkings/api/base_url", _base_url)
 	_backup(true)
 	await _scenario()
 	await game.logout(false)
@@ -96,7 +101,7 @@ func _scenario() -> void:
 	game.save.collect("forest_01", "coin_7_10")
 	game.persist()
 	check(game.save.is_collected("forest_01", "coin_7_10"), "çevrimdışı ilerleme yerelde kaydedilir")
-	ProjectSettings.set_setting("mathkings/api/base_url", "http://localhost:5055")
+	ProjectSettings.set_setting("mathkings/api/base_url", _base_url)
 	check(await game.sync_now(), "bağlantı gelince bekleyen ilerleme gönderilir")
 
 	# 7) Oturum süresi dolunca güvenli davranış.

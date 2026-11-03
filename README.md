@@ -26,8 +26,8 @@ dotnet tool restore
 dotnet run --project src/MathKings.Api        # Development: migration'ları uygular, http://localhost:5055
 dotnet ef migrations add <Ad> --project src/MathKings.Api --output-dir Data/Migrations -- --environment Development
 ```
-Geliştirmede e-posta gönderilmez: doğrulama/sıfırlama kodları API log'una yazılır
-ve `GET /dev/last-code?email=..&kind=confirm|reset` ile okunabilir (yalnızca Development).
+Geliştirmede e-postalar Laragon Mailpit'e gider: http://localhost:8025 (SMTP localhost:1025).
+Kodlar ayrıca `GET /dev/last-code?email=..&kind=confirm|reset` ile okunabilir (yalnızca Development).
 
 ## Testler
 ```sh
@@ -50,3 +50,11 @@ adb install -r builds/MathKings-debug.apk
 - `game/tools` — geliştirici araçları (export'a dahil değil)
 - `server/src/MathKings.Api` — `Auth/`, `Profiles/`, `Progress/`, `Data/`
 - `docs/GDD.md` — kısa oyun tasarım dokümanı; `docs/COMPLIANCE.md` — çocuk güvenliği/uyum listesi
+
+## Telefonda test (aynı Wi-Fi)
+1. `cd server && dotnet run --project src/MathKings.Api --launch-profile lan` (HTTPS 7258, yerel ağ).
+   İlk çalıştırmada Windows Güvenlik Duvarı izin isterse "Özel ağ" için izin verin.
+2. Telefonda geliştirici seçenekleri → USB hata ayıklama; USB ile bağlayın.
+3. `adb install -r builds/MathKings-debug.apk` (ya da APK'yı telefona kopyalayıp açın).
+Android debug sürümü `project.godot` → `api/base_url.android` adresini kullanır (bilgisayarın IP'si değişirse güncelleyin).
+Yerel geliştirme sertifikası yalnızca debug derlemede kabul edilir.

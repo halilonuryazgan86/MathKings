@@ -42,10 +42,19 @@ builder.Services.AddIdentityCore<AppUser>(o =>
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-if (!env.IsDevelopment() && !env.IsEnvironment("Testing"))
-    throw new InvalidOperationException("Üretim için gerçek e-posta göndericisi yapılandırılmadı (LogEmailSender yalnızca geliştirme içindir).");
+// E-posta: "Smtp" (geliştirmede Laragon Mailpit, yayında gerçek sağlayıcı) veya "Log" (yalnızca test/geliştirme).
 builder.Services.AddSingleton<LogEmailSender>();
-builder.Services.AddSingleton<IAccountEmailSender>(sp => sp.GetRequiredService<LogEmailSender>());
+if (config["Email:Mode"] == "Smtp")
+{
+    builder.Services.Configure<SmtpOptions>(config.GetSection("Email:Smtp"));
+    builder.Services.AddSingleton<IAccountEmailSender, SmtpEmailSender>();
+}
+else
+{
+    if (!env.IsDevelopment() && !env.IsEnvironment("Testing"))
+        throw new InvalidOperationException("Üretimde Email:Mode=Smtp ve SMTP ayarları zorunludur.");
+    builder.Services.AddSingleton<IAccountEmailSender>(sp => sp.GetRequiredService<LogEmailSender>());
+}
 
 builder.Services.AddRateLimiter(o =>
 {
