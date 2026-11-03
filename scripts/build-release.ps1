@@ -1,4 +1,4 @@
-# Google Play için imzalı release AAB üretir.
+﻿# Google Play için imzalı release AAB üretir.
 # Yükleme anahtarı repo dışındadır: %USERPROFILE%\.mathkings\ (şifre upload-keystore.properties içinde).
 # Kullanım: powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1
 $ErrorActionPreference = "Stop"

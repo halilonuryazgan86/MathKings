@@ -43,6 +43,10 @@ adb install -r builds/MathKings-debug.apk
 ```
 Google Play için imzalı AAB: `scripts\build-release.ps1` — ayrıntılar ve yayın listesi `docs/RELEASE.md`.
 
+## Dizüstünde telefon görünümü
+`powershell -ExecutionPolicy Bypass -File scripts\run-mobile.ps1 [-Device telefon|eski-telefon|tablet]`
+Pencere cihaz oranında açılır; dokunmatik butonlar fareyle kullanılır (`godot --path game -- --mobile`).
+
 ## Performans
 `godot --path game -s res://tools/perf_probe.gd` (pencereli): her bölümde V-Sync kapalı FPS ölçer.
 

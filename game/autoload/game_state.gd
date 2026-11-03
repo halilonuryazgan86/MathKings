@@ -30,8 +30,20 @@ var _level_world := {}  # level_id -> dünya tanımı
 var _sync_queued := false
 
 
+## Masaüstünde telefon simülasyonu: godot --path game -- --mobile
+## Dokunmatik butonlar görünür, fare tıklamaları dokunma olarak işlenir.
+var mobile_sim := "--mobile" in OS.get_cmdline_user_args()
+
+
+## Ekrandaki dokunmatik kontroller gösterilsin mi?
+func is_touch_ui() -> bool:
+	return mobile_sim or DisplayServer.is_touchscreen_available()
+
+
 func _ready() -> void:
 	TranslationServer.set_locale("tr")
+	if mobile_sim:
+		Input.emulate_touch_from_mouse = true
 	_load_worlds()
 	Cloud.session_expired.connect(func() -> void: notice_key = "SESSION_EXPIRED")
 	if Cloud.active_profile_id.is_empty():

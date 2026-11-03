@@ -13,7 +13,7 @@ var _pressed := {}   # action -> true
 
 func _ready() -> void:
 	mouse_filter = MOUSE_FILTER_IGNORE
-	visible = DisplayServer.is_touchscreen_available()
+	visible = GameState.is_touch_ui()
 	resized.connect(_layout)
 	_layout()
 

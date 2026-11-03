@@ -59,7 +59,7 @@ func _physics_process(_delta: float) -> void:
 
 
 func _show_intro() -> void:
-	var controls_key := "OWL_CONTROLS_TOUCH" if DisplayServer.is_touchscreen_available() else "OWL_CONTROLS_KEYS"
+	var controls_key := "OWL_CONTROLS_TOUCH" if GameState.is_touch_ui() else "OWL_CONTROLS_KEYS"
 	_owl.show_lines(PackedStringArray([
 		tr("OWL_INTRO_1").format({"name": GameState.save.nickname()}),
 		tr("OWL_INTRO_2"),
