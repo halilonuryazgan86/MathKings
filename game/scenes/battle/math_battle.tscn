@@ -1,0 +1,182 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/battle/math_battle.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/ui/forest_backdrop.gd" id="2"]
+[ext_resource type="Script" path="res://scenes/player/character_visual.gd" id="3"]
+[ext_resource type="Script" path="res://scenes/battle/monster_visual.gd" id="4"]
+[ext_resource type="Script" path="res://scenes/battle/hp_bar.gd" id="5"]
+[ext_resource type="Script" path="res://scenes/ui/owl_portrait.gd" id="6"]
+
+[node name="MathBattle" type="CanvasLayer"]
+process_mode = 3
+layer = 12
+script = ExtResource("1")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2")
+
+[node name="Shade" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.12, 0.06, 0.25, 0.3)
+
+[node name="Arena" type="Node2D" parent="Root"]
+unique_name_in_owner = true
+
+[node name="Hero" type="Node2D" parent="Root/Arena"]
+unique_name_in_owner = true
+position = Vector2(290, 540)
+scale = Vector2(1.7, 1.7)
+script = ExtResource("3")
+
+[node name="Monster" type="Node2D" parent="Root/Arena"]
+unique_name_in_owner = true
+position = Vector2(990, 540)
+script = ExtResource("4")
+
+[node name="ExitButton" type="Button" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 140.0
+offset_bottom = 96.0
+theme_override_font_sizes/font_size = 26
+text = "BATTLE_EXIT"
+
+[node name="MonsterBar" type="VBoxContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 110.0
+grow_horizontal = 0
+
+[node name="MonsterName" type="Label" parent="Root/MonsterBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "BATTLE_MONSTER"
+horizontal_alignment = 2
+
+[node name="HpBar" type="Control" parent="Root/MonsterBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(296, 48)
+layout_mode = 2
+script = ExtResource("5")
+
+[node name="QuestionPanel" type="PanelContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -330.0
+offset_top = 18.0
+offset_right = 330.0
+offset_bottom = 150.0
+grow_horizontal = 2
+
+[node name="QuestionLabel" type="Label" parent="Root/QuestionPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.6, 1)
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1
+auto_translate_mode = 2
+
+[node name="HintPanel" type="PanelContainer" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -420.0
+offset_top = 170.0
+offset_right = 420.0
+offset_bottom = 300.0
+grow_horizontal = 2
+
+[node name="HBox" type="HBoxContainer" parent="Root/HintPanel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Owl" type="Control" parent="Root/HintPanel/HBox"]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("6")
+
+[node name="HintLabel" type="Label" parent="Root/HintPanel/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+autowrap_mode = 3
+vertical_alignment = 1
+auto_translate_mode = 2
+
+[node name="ContinueButton" type="Button" parent="Root/HintPanel/HBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 4
+text = "BATTLE_CONTINUE"
+
+[node name="Praise" type="Label" parent="Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -40.0
+offset_right = 250.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+auto_translate_mode = 2
+
+[node name="Answers" type="HBoxContainer" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -148.0
+offset_bottom = -26.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+theme_override_constants/separation = 26

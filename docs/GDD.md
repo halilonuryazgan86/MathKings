@@ -32,8 +32,18 @@ Splash → Ana Menü (Misafir / Giriş* / Kayıt*) → Profil (takma ad + sını
 - Harita kuralı: basamaklar ≤ 2 tile, boşluklar ≤ 3 tile.
 - Altın = 1, yıldız = 10 altın.
 
+## Matematik Savaşı (Sprint 2)
+- Kristal Kapısı'nda Sayı Canavarı ile karşılaşılır; canavarın 5 kristal canı vardır.
+- 4 büyük seçenekli soru. Doğru cevap = 1 hasar. Oyuncu can kaybetmez; savaş her zaman kazanılır.
+- 1. yanlış: seçenek elenir, Baykuş adım ipucu verir. 2. yanlış: çözüm gösterilir, yeni soruya geçilir.
+- Yıldız: ilk denemede doğru oranı ≥ %80 → 3, ≥ %50 → 2, aksi halde 1.
+- Altın: ilk zafer 20 + her yeni yıldız 5. Tekrar oynamada yalnızca rekor artışı ödüllenir.
+- Sorular `data/questions/numbers_forest.json` şablonlarından sınıfa göre üretilir
+  (4: dört işlem; 5: + basit işlem önceliği; 6–7: parantez ve karma işlem önceliği).
+  Bu dosya öğretmen incelemesinden geçmeden yayınlanmaz (`reviewStatus`).
+- Konu başına çözülen/ilk denemede doğru sayısı kaydedilir (ileride uyarlanabilir zorluk için).
+
 ## Sonraki sprintler
-- S2: Matematik Savaşı (soru şablonları, ipuçları, sınıfa göre zorluk), bölüm sonu ödülü.
 - S3: .NET 10 API, yetişkin hesabı + çocuk profili, misafir ilerlemesini aktarma, bulut kayıt.
 
 ## Açık yasal/uyum maddeleri (doğrulanmadı)

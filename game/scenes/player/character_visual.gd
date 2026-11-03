@@ -38,7 +38,16 @@ func _draw() -> void:
 	var bob := 0.0
 	var swing := 0.0
 	var squash := Vector2.ONE
+	var lean := 0.0
+	var arms_up := false
 	match animation:
+		"attack":
+			lean = 0.18
+			swing = 6.0
+			squash = Vector2(1.05, 0.97)
+		"cheer":
+			bob = -absf(sin(_t * 8.0)) * 14.0
+			arms_up = true
 		"idle":
 			bob = sin(_t * 3.0) * 2.0
 		"walk":
@@ -49,14 +58,15 @@ func _draw() -> void:
 		"fall":
 			squash = Vector2(1.06, 0.95)
 			swing = 4.0
-	draw_set_transform(Vector2(0, bob), 0.0, Vector2(squash.x * facing, squash.y))
+	draw_set_transform(Vector2(0, bob), lean * facing, Vector2(squash.x * facing, squash.y))
 
 	var dark: Color = st.accent.darkened(0.35)
+	var arm_y := -84.0 if arms_up else -54.0
 	# Bacaklar
 	draw_rect(Rect2(-14 + swing * 0.5, -24, 11, 24), dark)
 	draw_rect(Rect2(3 - swing * 0.5, -24, 11, 24), dark)
 	# Arka kol
-	draw_rect(Rect2(-24 - swing * 0.3, -54, 9, 26), st.body.darkened(0.2))
+	draw_rect(Rect2(-24 - swing * 0.3, arm_y, 9, 26), st.body.darkened(0.2))
 	# Gövde
 	if _body_box == null:
 		_body_box = StyleBoxFlat.new()
@@ -67,7 +77,7 @@ func _draw() -> void:
 	draw_style_box(_body_box, Rect2(-20, -62, 40, 42))
 	draw_rect(Rect2(-20, -32, 40, 6), st.accent)
 	# Ön kol
-	draw_rect(Rect2(14 + swing * 0.3, -54, 9, 26), st.body.darkened(0.1))
+	draw_rect(Rect2(14 + swing * 0.3, arm_y, 9, 26), st.body.darkened(0.1))
 	# Baş
 	draw_circle(Vector2(2, -80), 21, st.skin)
 	draw_circle(Vector2(2, -80), 21, st.skin.darkened(0.25), false, 2.0)

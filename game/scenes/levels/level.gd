@@ -22,6 +22,7 @@ var _finished := false
 @onready var _player: Player = $Player
 @onready var _hud: Hud = $Hud
 @onready var _owl: OwlDialog = $OwlDialog
+@onready var _battle: MathBattle = $MathBattle
 
 
 func _ready() -> void:
@@ -142,6 +143,7 @@ func _char_at(cell: Vector2i) -> String:
 func _on_picked(p: Pickup) -> void:
 	if GameState.collect(level_id, p.item_id, p.gold_value()):
 		_gold_this_run += p.gold_value()
+		Sfx.play(self, "coin")
 		if p.kind == Pickup.Kind.STAR:
 			_hud.set_stars(GameState.save.star_count(level_id), _stars_total)
 
@@ -159,9 +161,10 @@ func _on_gate_reached() -> void:
 		return
 	_finished = true
 	_player.controls_enabled = false
-	GameState.save.complete_level(level_id)
-	GameState.persist()
 	_owl.show_lines(PackedStringArray([tr("OWL_GATE_1"), tr("OWL_GATE_2")]))
 	await _owl.finished
+	_battle.start(GameState.save.grade(), GameState.save.character())
+	var battle_stars: int = await _battle.finished
+	var reward := GameState.finish_battle(level_id, battle_stars)
 	get_tree().paused = true
-	_hud.show_result(_gold_this_run, GameState.save.star_count(level_id), _stars_total)
+	_hud.show_result(_gold_this_run + reward, GameState.save.star_count(level_id), _stars_total, battle_stars)

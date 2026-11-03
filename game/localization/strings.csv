@@ -31,7 +31,30 @@ OWL_INTRO_3,Altınları ve yıldızları topla. Ormanın sonundaki Kristal Kapı
 OWL_CONTROLS_TOUCH,Soldaki oklarla yürü. Sağdaki düğmeyle zıpla.
 OWL_CONTROLS_KEYS,Ok tuşları ya da A/D ile yürü. Boşluk tuşuyla zıpla.
 OWL_GATE_1,Harika iş çıkardın! Kristal Kapısı'na ulaştın.
-OWL_GATE_2,Kapıyı bir sayı canavarı koruyor. Matematik Savaşı çok yakında burada!
+OWL_GATE_2,Ama kapıyı Sayı Canavarı koruyor. Doğru cevaplarla onu yenelim!
+BATTLE_MONSTER,Sayı Canavarı
+BATTLE_INTRO,Her doğru cevap canavara sihirli bir yıldız fırlatır. Hazır mısın?
+BATTLE_EXIT,Çık
+BATTLE_CONTINUE,Devam
+BATTLE_PRAISE_1,Harika!
+BATTLE_PRAISE_2,Süper!
+BATTLE_PRAISE_3,Aferin!
+BATTLE_PRAISE_4,Doğru!
+BATTLE_ALMOST,Neredeyse!
+BATTLE_SOLUTION,Cevap: {expr} = {answer}. Haydi yeni bir soru deneyelim!
+BATTLE_VICTORY,Zafer!
+BATTLE_WIN,Başardın! Sayı Canavarı artık dostun. İlk kristal senin!
+HINT_ADD_SPLIT,İpucu: {a} sayısına önce {big} ekle. Sonra {small} ekle.
+HINT_ADD_SIMPLE,İpucu: Sayıları alt alta yaz ve birler basamağından başlayarak topla.
+HINT_SUB_SPLIT,İpucu: {a} sayısından önce {big} çıkar. Sonra {small} çıkar.
+HINT_SUB_SIMPLE,İpucu: Cevabını kontrol et: cevap + {b} = {a} olmalı.
+HINT_MUL_SPLIT,İpucu: {a} × {b} işlemini {a} × {b1} + {a} × {b2} olarak düşünebilirsin.
+HINT_MUL_REPEAT,İpucu: {a} sayısını {b} kez toplayabilirsin.
+HINT_DIV,İpucu: Hangi sayıyı {b} ile çarparsan {a} eder?
+HINT_ORDER_MUL,İpucu: Önce çarpma yapılır: {b} × {c} = {bc}. Sonra {a} {op} {bc} işlemini yap.
+HINT_ORDER_PAREN,İpucu: Önce parantezin içi hesaplanır: {a} {op} {b} = {ab}. Sonra {ab} × {c}.
+HINT_ORDER_MIX,İpucu: Önce iki çarpmayı yap: {a} × {b} = {ab} ve {c} × {d} = {cd}. Sonra ikisini topla.
+RESULT_BATTLE,Savaş yıldızları: {stars} / 3
 PAUSE_TITLE,Oyun Durdu
 PAUSE_RESUME,Devam Et
 PAUSE_MUSIC_ON,Müzik: Açık

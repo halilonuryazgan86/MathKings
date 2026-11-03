@@ -12,6 +12,7 @@ extends CanvasLayer
 @onready var _result_menu: Control = %ResultMenu
 @onready var _result_gold: Label = %ResultGold
 @onready var _result_stars: Label = %ResultStars
+@onready var _result_battle: Label = %ResultBattle
 @onready var _replay_button: Button = %ReplayButton
 
 
@@ -57,10 +58,11 @@ func close_pause() -> void:
 	get_tree().paused = false
 
 
-func show_result(gold_gained: int, stars: int, total_stars: int) -> void:
+func show_result(gold_gained: int, stars: int, total_stars: int, battle_stars: int) -> void:
 	_pause_button.hide()
 	_result_gold.text = tr("RESULT_GOLD").format({"gold": gold_gained})
 	_result_stars.text = tr("RESULT_STARS").format({"stars": stars, "total": total_stars})
+	_result_battle.text = tr("RESULT_BATTLE").format({"stars": battle_stars})
 	_result_menu.show()
 	_replay_button.grab_focus()
 

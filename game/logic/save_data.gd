@@ -8,6 +8,8 @@ const GRADES: Array[int] = [4, 5, 6, 7]
 const CHARACTER_IDS: Array[String] = ["arin", "lina", "bora"]
 const MAX_NICKNAME_LENGTH := 24
 const STAR_PREFIX := "star_"
+const BATTLE_FIRST_WIN_GOLD := 20
+const BATTLE_STAR_GOLD := 5
 
 var _data: Dictionary
 
@@ -92,6 +94,41 @@ func star_count(level_id: String) -> int:
 		func(id: String) -> bool: return id.begins_with(STAR_PREFIX)).size()
 
 
+## Savaş sonucunu kaydeder ve verilen altını döndürür. İlk zafer BATTLE_FIRST_WIN_GOLD,
+## her yeni (daha önce ulaşılmamış) yıldız BATTLE_STAR_GOLD verir. Tekrar oynama ödül çoğaltmaz.
+func record_battle(level_id: String, stars: int) -> int:
+	if level_id.is_empty():
+		return 0
+	var lv := _level(level_id)
+	var new_best := clampi(stars, 1, 3)
+	var old_best: int = lv.battleStars
+	var reward := BATTLE_FIRST_WIN_GOLD if old_best == 0 else 0
+	if new_best > old_best:
+		reward += (new_best - old_best) * BATTLE_STAR_GOLD
+		lv.battleStars = new_best
+	_data.gold += reward
+	return reward
+
+
+func battle_stars(level_id: String) -> int:
+	return _data.levels[level_id].battleStars if _data.levels.has(level_id) else 0
+
+
+## Öğrenme istatistiği: konu başına çözülen soru ve ilk denemede doğru sayısı.
+func record_answer(topic: String, correct_first_try: bool) -> void:
+	if topic.is_empty():
+		return
+	if not _data.stats.has(topic):
+		_data.stats[topic] = {"attempts": 0, "correct": 0}
+	_data.stats[topic].attempts += 1
+	if correct_first_try:
+		_data.stats[topic].correct += 1
+
+
+func topic_stats(topic: String) -> Dictionary:
+	return _data.stats.get(topic, {"attempts": 0, "correct": 0}).duplicate()
+
+
 ## İlk tamamlamada true döner (ileride tek seferlik bölüm ödülü için).
 func complete_level(level_id: String) -> bool:
 	if level_id.is_empty() or is_level_completed(level_id):
@@ -108,7 +145,7 @@ func is_level_completed(level_id: String) -> bool:
 
 func _level(level_id: String) -> Dictionary:
 	if not _data.levels.has(level_id):
-		_data.levels[level_id] = {"completed": false, "collected": []}
+		_data.levels[level_id] = {"completed": false, "collected": [], "battleStars": 0}
 	return _data.levels[level_id]
 
 
@@ -125,6 +162,7 @@ static func _normalized(src: Dictionary) -> Dictionary:
 		"seenIntro": false,
 		"gold": 0,
 		"levels": {},
+		"stats": {},
 	}
 	var guest = src.get("guestId")
 	if guest is String and guest.length() == 36:
@@ -155,11 +193,25 @@ static func _normalized(src: Dictionary) -> Dictionary:
 				for item in lv.collected:
 					if item is String and item not in collected:
 						collected.append(item)
+			var best = lv.get("battleStars")
 			out.levels[id] = {
 				"completed": lv.get("completed") is bool and lv.completed,
 				"collected": collected,
+				"battleStars": clampi(int(best), 0, 3) if _is_number(best) else 0,
 			}
+
+	var stats = src.get("stats")
+	if stats is Dictionary:
+		for topic in stats:
+			var s = stats[topic]
+			if topic is String and s is Dictionary and _is_number(s.get("attempts")) and _is_number(s.get("correct")):
+				var attempts := maxi(int(s.attempts), 0)
+				out.stats[topic] = {"attempts": attempts, "correct": clampi(int(s.correct), 0, attempts)}
 	return out
+
+
+static func _is_number(v: Variant) -> bool:
+	return v is int or v is float
 
 
 static func _uuid_v4() -> String:

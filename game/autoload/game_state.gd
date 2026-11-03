@@ -34,6 +34,15 @@ func collect(level_id: String, item_id: String, gold_value: int) -> bool:
 	return true
 
 
+## Savaş sonucunu ve bölüm tamamlanmasını kaydeder; verilen altını döndürür.
+func finish_battle(level_id: String, stars: int) -> int:
+	var reward := save.record_battle(level_id, stars)
+	save.complete_level(level_id)
+	persist()
+	gold_changed.emit(save.gold())
+	return reward
+
+
 func level_layout_path(level_id: String) -> String:
 	return _levels.get(level_id, {}).get("layout", "")
 

@@ -24,6 +24,13 @@ func _initialize() -> void:
 		test_worlds_catalog,
 		test_input_actions,
 		test_translations,
+		test_generated_questions_are_correct,
+		test_generator_is_deterministic,
+		test_grade_topics,
+		test_battle_rules,
+		test_battle_stars,
+		test_battle_reward_not_farmable,
+		test_answer_stats,
 	]
 	for t: Callable in tests:
 		_cleanup()
@@ -172,6 +179,134 @@ func test_input_actions() -> void:
 	for action in ["move_left", "move_right", "jump"]:
 		check(InputMap.has_action(action) and InputMap.action_get_events(action).size() >= 2,
 			"girdi eylemi tanımlı: %s" % action)
+
+
+# --- Matematik Savaşı --------------------------------------------------------
+
+func _evaluate(expression: String) -> Variant:
+	var e := Expression.new()
+	if e.parse(expression.replace("×", "*").replace("÷", "/")) != OK:
+		return null
+	return e.execute()
+
+
+func test_generated_questions_are_correct() -> void:
+	TranslationServer.set_locale("tr")
+	for grade in SaveData.GRADES:
+		var gen := QuestionGenerator.for_grade(grade, QuestionGenerator.DEFAULT_PATH, 1000 + grade)
+		var bad := []
+		for i in 500:
+			var q := gen.next()
+			var value = _evaluate(q.expression)
+			var hint := q.hint_text()
+			var problems := []
+			if not (value is int) or value != q.answer:
+				problems.append("cevap %s != %s" % [q.answer, value])
+			if q.answer < 0:
+				problems.append("negatif cevap")
+			if q.choices.size() != 4 or q.answer not in q.choices:
+				problems.append("seçenekler")
+			var unique := {}
+			for c in q.choices:
+				unique[c] = true
+				if c < 0:
+					problems.append("negatif seçenek")
+			if unique.size() != 4:
+				problems.append("tekrarlı seçenek")
+			if hint == q.hint_key or "{" in hint:
+				problems.append("ipucu çevirisi/parametresi eksik: " + hint)
+			if not problems.is_empty():
+				bad.append("%s -> %s" % [q.expression, problems])
+		check(bad.is_empty(), "%d. sınıf: 500 soru doğru, 4 benzersiz seçenek, ipucu tam %s" % [grade, bad.slice(0, 3)])
+
+
+func test_generator_is_deterministic() -> void:
+	var a := QuestionGenerator.for_grade(5, QuestionGenerator.DEFAULT_PATH, 42)
+	var b := QuestionGenerator.for_grade(5, QuestionGenerator.DEFAULT_PATH, 42)
+	var same := true
+	for i in 50:
+		var qa := a.next()
+		var qb := b.next()
+		same = same and qa.expression == qb.expression and qa.choices == qb.choices
+	check(same, "aynı seed aynı soru dizisini üretir")
+	check(QuestionGenerator.for_grade(2).next() != null and QuestionGenerator.for_grade(9).next() != null,
+		"aralık dışı sınıf güvenli şekilde sınırlanır")
+
+
+func test_grade_topics() -> void:
+	var topics := {}
+	var gen := QuestionGenerator.for_grade(4, QuestionGenerator.DEFAULT_PATH, 3)
+	for i in 300:
+		topics[gen.next().topic] = true
+	check(topics.keys().all(func(t: String) -> bool: return t in ["add", "sub", "mul", "div"]),
+		"4. sınıfa işlem önceliği sorulmaz")
+	topics.clear()
+	gen = QuestionGenerator.for_grade(7, QuestionGenerator.DEFAULT_PATH, 3)
+	for i in 300:
+		topics[gen.next().topic] = true
+	check(topics.has("order_paren") and topics.has("order_mix"), "7. sınıfta işlem önceliği soruları var")
+
+
+func _question(answer: int) -> MathQuestion:
+	var q := MathQuestion.new()
+	q.answer = answer
+	q.choices = [answer, answer + 1, answer + 2, answer + 3]
+	return q
+
+
+func test_battle_rules() -> void:
+	var b := BattleState.new()
+	b.start_question(_question(10))
+	check(b.answer(11) == BattleState.Result.WRONG_HINT, "ilk yanlışta ipucu")
+	check(b.monster_hp == BattleState.MONSTER_HP, "yanlış cevap canavara hasar vermez")
+	check(b.answer(12) == BattleState.Result.WRONG_REVEAL, "ikinci yanlışta çözüm gösterilir")
+	b.start_question(_question(7))
+	check(b.answer(8) == BattleState.Result.WRONG_HINT and b.answer(7) == BattleState.Result.CORRECT,
+		"ipucundan sonra doğru cevap kabul edilir")
+	check(b.monster_hp == BattleState.MONSTER_HP - 1, "doğru cevap 1 hasar verir")
+	check(not b.is_won(), "1 doğru cevapla savaş bitmez")
+	for i in BattleState.MONSTER_HP - 1:
+		b.start_question(_question(i))
+		b.answer(i)
+	check(b.is_won() and b.monster_hp == 0, "5 doğru cevapla savaş kazanılır")
+
+
+func test_battle_stars() -> void:
+	var perfect := BattleState.new()
+	for i in 5:
+		perfect.start_question(_question(i))
+		perfect.answer(i)
+	check(perfect.stars() == 3, "hepsi ilk denemede doğru: 3 yıldız")
+	var struggled := BattleState.new()
+	for i in 5:
+		struggled.start_question(_question(i))
+		struggled.answer(i + 1)
+		struggled.answer(i)
+	check(struggled.stars() == 1, "hepsi ipucuyla doğru: yine de 1 yıldız (kazanan herkes ödül alır)")
+
+
+func test_battle_reward_not_farmable() -> void:
+	var s := SaveData.new()
+	check(s.record_battle("forest_01", 1) == 25, "ilk zafer: 20 + 1 yıldız × 5 = 25 altın")
+	check(s.record_battle("forest_01", 1) == 0, "aynı sonuçla tekrar: altın yok")
+	check(s.record_battle("forest_01", 3) == 10, "yıldız artışı: yalnızca yeni 2 yıldız için 10 altın")
+	check(s.record_battle("forest_01", 2) == 0, "daha düşük sonuç: altın yok, rekor korunur")
+	check(s.battle_stars("forest_01") == 3 and s.gold() == 35, "en iyi yıldız 3, toplam 35 altın")
+	check(s.record_battle("forest_01", 99) == 0, "geçersiz yıldız değeri sınırlanır")
+	var l := SaveData.new({"levels": {"forest_01": {"battleStars": 9, "collected": []}}})
+	check(l.battle_stars("forest_01") == 3, "kayıttaki geçersiz savaş yıldızı sınırlanır")
+
+
+func test_answer_stats() -> void:
+	var s := SaveData.new()
+	s.record_answer("mul", true)
+	s.record_answer("mul", false)
+	s.record_answer("div", true)
+	check(s.topic_stats("mul") == {"attempts": 2, "correct": 1}, "konu istatistiği tutulur")
+	SaveStore.save_data(s, TEST_PATH)
+	check(SaveStore.load_data(TEST_PATH).topic_stats("div") == {"attempts": 1, "correct": 1}, "istatistik kaydedilir")
+	var t := SaveData.new({"stats": {"mul": {"attempts": 2, "correct": 50}, "x": "bozuk"}})
+	check(t.topic_stats("mul").correct == 2 and t.topic_stats("x").attempts == 0, "bozuk istatistik temizlenir")
 
 
 func test_translations() -> void:

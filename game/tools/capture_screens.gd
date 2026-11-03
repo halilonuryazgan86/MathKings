@@ -31,7 +31,53 @@ func _run() -> void:
 			player.global_position = Vector2(x, 0)
 			await _frames(90)
 			await _capture("%s_%d" % [shot[0], int(x)])
+	await _capture_battle()
 	quit()
+
+
+## Gerçek akış: oyuncu kapıya gider, Baykuş konuşur, savaş oynanır, sonuç ekranı gelir.
+## (Tipsiz değişkenler: -s modunda autoload'lar derleme anında henüz kayıtlı değildir.)
+func _capture_battle() -> void:
+	var level = current_scene
+	var gate: Node2D = level.get_node("Objects").get_children().filter(
+		func(n: Node) -> bool: return n is CrystalGate)[0]
+	paused = false
+	level.get_node("Player").global_position = gate.global_position + Vector2(-60, -10)
+	await _frames(30)
+	var owl = level.get_node("OwlDialog")
+	while owl.is_open():
+		owl.get_node("%NextButton").pressed.emit()
+		await _frames(5)
+
+	var battle = level.get_node("MathBattle")
+	await _frames(30)
+	await _capture("battle_start")
+	var buttons: Array = battle.get_node("%Answers").get_children()
+	var answer: int = battle._state.current.answer
+	var wrong := buttons.filter(func(b: Button) -> bool: return b.get_meta("value") != answer)
+	wrong[0].pressed.emit()
+	await _frames(30)
+	await _capture("battle_hint")
+	wrong[1].pressed.emit()
+	await _frames(30)
+	await _capture("battle_reveal")
+	battle.get_node("%ContinueButton").pressed.emit()
+	for i in BattleState.MONSTER_HP:
+		while battle._busy:
+			await _frames(2)
+		answer = battle._state.current.answer
+		buttons.filter(func(b: Button) -> bool: return b.get_meta("value") == answer)[0].pressed.emit()
+		await _frames(30)
+		if i == 0:
+			await _capture("battle_attack")
+	while battle._question.text.ends_with("?"):
+		await _frames(2)
+	await _frames(50)
+	await _capture("battle_victory")
+	while battle.is_open():
+		await _frames(5)
+	await _frames(30)
+	await _capture("level_result")
 
 
 func _frames(n: int) -> void:

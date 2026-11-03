@@ -175,6 +175,11 @@ unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
 
+[node name="ResultBattle" type="Label" parent="ResultMenu/Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
 [node name="Buttons" type="HBoxContainer" parent="ResultMenu/Center/Panel/VBox"]
 layout_mode = 2
 alignment = 1

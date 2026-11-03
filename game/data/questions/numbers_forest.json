@@ -1,0 +1,32 @@
+{
+	"world": "numbers_forest",
+	"reviewStatus": "draft",
+	"note": "Sayı aralıkları öğretmen incelemesinden geçmeden yayınlanmaz. a/b/c/d: [min, max]. div: b = bölen, q = bölüm.",
+	"grades": {
+		"4": [
+			{ "type": "add", "weight": 3, "a": [20, 500], "b": [10, 400] },
+			{ "type": "sub", "weight": 3, "a": [50, 900], "b": [10, 400] },
+			{ "type": "mul", "weight": 3, "a": [2, 10], "b": [2, 10] },
+			{ "type": "div", "weight": 2, "b": [2, 9], "q": [2, 10] }
+		],
+		"5": [
+			{ "type": "add", "weight": 2, "a": [100, 5000], "b": [100, 4000] },
+			{ "type": "sub", "weight": 2, "a": [500, 9000], "b": [100, 4000] },
+			{ "type": "mul", "weight": 3, "a": [3, 25], "b": [3, 12] },
+			{ "type": "div", "weight": 2, "b": [3, 12], "q": [3, 25] },
+			{ "type": "order_mul", "weight": 2, "a": [2, 30], "b": [2, 9], "c": [2, 9] }
+		],
+		"6": [
+			{ "type": "mul", "weight": 2, "a": [12, 40], "b": [3, 15] },
+			{ "type": "div", "weight": 2, "b": [4, 15], "q": [5, 40] },
+			{ "type": "order_mul", "weight": 3, "a": [5, 60], "b": [2, 12], "c": [2, 12] },
+			{ "type": "order_paren", "weight": 3, "a": [5, 30], "b": [2, 20], "c": [2, 9] }
+		],
+		"7": [
+			{ "type": "div", "weight": 1, "b": [6, 20], "q": [10, 60] },
+			{ "type": "order_mul", "weight": 2, "a": [10, 100], "b": [3, 15], "c": [3, 12] },
+			{ "type": "order_paren", "weight": 3, "a": [10, 50], "b": [3, 30], "c": [3, 12] },
+			{ "type": "order_mix", "weight": 3, "a": [2, 12], "b": [2, 12], "c": [2, 12], "d": [2, 12] }
+		]
+	}
+}
